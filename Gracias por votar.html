@@ -1,1 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alquimia Natural - Verde Suave</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for a soft green theme and mobile menu transitions */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; /* Light gray background */
+            min-height: 200vh; /* For demonstration of fixed elements and scrolling */
+            scroll-behavior: smooth; /* Smooth scrolling for internal links */
+        }
+        .soft-green-bg {
+            background-color: #D1FAE5; /* A very light, soft green */
+        }
+        .soft-green-text {
+            color: #10B981; /* A medium green for text */
+        }
+       
+        .dark-green-bg {
+            background-image: url(Jabon-de-lavanda-768x432.jpg); /* Replace with the actual URL of your image */
+            /* Optional background properties for better control: */
+            background-size: cover; /* Scale the image to cover the entire background */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            background-position: center center; /* Center the image within the element */
+        }
+        .dark-green-text {
+            color: #065F46;
+        }
 
+        /* Mobile menu transition */
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .mobile-menu.active {
+            background-color: #065F46;
+            max-height: 500px; /* Adjust as needed for content */
+            transition: max-height 0.3s ease-in;
+        }
+
+        /* Fixed button visibility */
+        .fixed-button {
+            display: none; /* Hidden by default */
+        }
+        .fixed-button.show {
+            display: block; /* Shown when scrolled */
+        }
+
+        /* Step card styling */
+        .step-card {
+            @apply bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center;
+        }
+        .step-image {
+            @apply rounded-lg mb-4 w-full h-auto max-w-md;
+        }
+        .contenedor logo {
+            @apply rounded-lg mb-4 w-full h-auto max-w-md;
+        }
+
+        /* --- Animación para el logo principal --- */
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-logo-entry {
+            animation: fadeInSlideUp 1.2s ease-out forwards;
+            opacity: 0; /* Asegura que el logo esté oculto antes de la animación */
+        }
+    </style>
+</head>
+<body id="top">
+
+    <nav class="dark-green-bg p-4 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#top" class="text-white text-2xl font-bold flex items-center soft-green-text">
+                <img src="unnamed.png"
+                     alt="Logo Alquimia Natural"
+                     class="h-12 w-auto mr-7 rounded-full">ALQUIMIA NATURAL
+            </a>
+
+            <button id="mobileMenuButton" class="text-gren md:hidden focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+
+            <div class="hidden md:flex space-x-6">
+                <a href="#hero" class="text-white hover:text-green-200 transition duration-300">Inicio</a>
+                <a href="#como-hacer" class="text-white hover:text-green-200 transition duration-300">Cómo Hacer</a>
+                <a href="#alumnos" class="text-white hover:text-green-200 transition duration-300">Alumnos</a>
+                <a href="#contacto" class="text-white hover:text-green-200 transition duration-300">Contacto</a>
+                <a href="#proyecto" class="text-white hover:text-green-200 transition duration-300">Otro Proyecto</a>
+                <a href="votaciones.html" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition duration-300 ease-in-out">Votar</a>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="mobile-menu md:hidden mt-4">
+            <a href="#hero" class="block text-white py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Inicio</a>
+            <a href="#como-hacer" class="block text-white py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Cómo Hacer</a>
+            <a href="#alumnos" class="block text-white py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Alumnos</a>
+            <a href="#contacto" class="block text-white py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Contacto</a>
+            <a href="#proyecto" class="block text-white py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Otro Proyecto</a>
+            <a href="votaciones.html" class="block bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition duration-300 ease-in-out mt-2 text-center">Votar</a>
+        </div>
+    </nav>
+<section id="logo">
+    <div class="container mx-auto px=12">
+        <img src="unnamed2.png" alt="Alquimia Natural Logo" class="animate-logo-entry">
+        <p class="tet-center text-3xl md:text-4xl font-semibold mb-6 text-green-800">Alquimia Natural</p>
+    </div>
+</section>
+    <
+<video controls width="640" height="360">
+  <source src="formulas.mp4" type="video/mp4">
+  <source src="nombre_del_video.webm" type="video/webm">
+  Tu navegador no soporta la etiqueta de video.
+</video>
+    <p>gracias por tu votacion en breve realizaremos un sorteo</p>
+
+    <footer class="bg-green-800 text-white py-8 text-center">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2025 Jabones Artesanales. Todos los derechos reservados.</p>
+            <p class="mt-2">Hecho por alumnos 3°1 - cens452 .</p>
+        </div>
+    </footer>
+
+    <a href="#top" id="backToTopBtn" class="fixed-button fixed bottom-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-full shadow-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300 ease-in-out text-base md:text-lg px-5 py-2.5 md:px-6 md:py-3">
+        Volver Arriba
+    </a>
+
+    <script>
+        // Get references to the mobile menu button and the mobile menu container
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const backToTopBtn = document.getElementById('backToTopBtn');
+
+        // Function to toggle the mobile menu visibility
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Add click event listener to the mobile menu button
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+
+        // Close the mobile menu if a link is clicked (for better UX)
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                }
+            });
+        });
+
+        // Optional: Close the mobile menu if the window is resized to desktop size
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) { // Tailwind's 'md' breakpoint
+                if (mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                }
+            }
+        });
+
+        // Show/hide "Volver Arriba" button based on scroll position
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) { // Show after scrolling 300px
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+        
+        // --- Contador de visitas para index.html ---
+        document.addEventListener('DOMContentLoaded', () => {
+            let visits = parseInt(localStorage.getItem('indexPageVisits')) || 0;
+            visits++;
+            localStorage.setItem('indexPageVisits', visits);
+            console.log(`index.html visits: ${visits}`); // For debugging
+        });
+    </script>
+
+</body>
+  </html>
+                  
