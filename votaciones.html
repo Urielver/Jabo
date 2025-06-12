@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alquimia Natural - Votación de Jabones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos generales y colores de la página */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; /* Light gray background */
+            min-height: 100vh;
+            scroll-behavior: smooth;
+        }
+        .soft-green-bg {
+            background-color: #D1FAE5; /* A very light, soft green */
+        }
+        .soft-green-text {
+            color: #10B981; /* A medium green for text */
+        }
+        .dark-green-bg {
+            background-image: url(imagen/Jabon-de-lavanda-768x432.jpg); /* Placeholder, actual image URL may vary */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+        .dark-green-text {
+            color: #065F46;
+        }
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .mobile-menu.active {
+            max-height: 500px;
+            transition: max-height 0.3s ease-in;
+        }
+        .fixed-button {
+            display: none;
+        }
+        .fixed-button.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="dark-green-bg p-4 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-white text-2xl font-bold flex items-center soft-green-text">
+                <img src="imagen/unnamed.png"
+                     alt="Logo Alquimia Natural"
+                     class="h-10 w-auto mr-2 rounded-full">ALQUIMIA NATURAL
+            </a>
+
+            <button id="mobileMenuButton" class="text-black md:hidden focus:outline-none">
+                <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="#hero" class="text-white hover:text-green-200 transition duration-300">Inicio</a>
+                <a href="#vote-section" class="text-white hover:text-green-200 transition duration-300">Votar</a>
+                <a href="results.html" class="text-white hover:text-green-200 transition duration-300">Resultados</a>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="mobile-menu md:hidden mt-4">
+            <a href="#hero" class="block text-white py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Inicio</a>
+            <a href="#vote-section" class="block text-white py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Votar</a>
+            <a href="results.html" class="block text-white py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Resultados</a>
+        </div>
+    </nav>
+
+    <section id="hero" class="soft-green-bg py-16 md:py-24 text-center">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-green-800">¡Bienvenido a Alquimia Natural!</h1>
+            <p class="text-lg md:text-xl text-green-700 max-w-3xl mx-auto mb-8">
+                Aquí, tu opinión sobre nuestros jabones artesanales es muy importante.
+                Ayúdanos a elegir tu favorito votando en nuestra sección.
+            </p>
+            <a href="#vote-section" class="bg-green-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-green-700 transition duration-300">
+                ¡Vota Ahora!
+            </a>
+        </div>
+    </section>
+
+
+    <section id="vote-section" class="py-16 md:py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-green-800">Vota por tu Jabón Favorito</h2>
+            <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <form id="voteForm">
+                    <div class="mb-4">
+                        <label for="voterName" class="block text-gray-700 text-sm font-bold mb-2">Nombre:</label>
+                        <input type="text" id="voterName" name="voterName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="voterLastName" class="block text-gray-700 text-sm font-bold mb-2">Apellido:</label>
+                        <input type="text" id="voterLastName" name="voterLastName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="soapSelect" class="block text-gray-700 text-sm font-bold mb-2">Selecciona tu Jabón:</label>
+                        <select id="soapSelect" name="soap" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" required>
+                            <option value="">-- Por favor, elige una opción --</option>
+                            <option value="Jabon de Lavanda">Jabón de Lavanda</option>
+                            <option value="Jabon de Avena y Miel">Jabón de Avena y Miel</option>
+                            <option value="Jabon de Caléndula">Jabón de Caléndula</option>
+                            <option value="Jabon de Carbon Activado">Jabón de Carbón Activado</option>
+                            <option value="Jabon de Romero y Menta">Jabón de Romero y Menta</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                            Enviar Voto
+                        </button>
+                    </div>
+                </form>
+                <div id="message" class="mt-4 text-center text-sm font-semibold"></div>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="bg-green-800 text-white py-8 text-center">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2025 Jabones Artesanales. Todos los derechos reservados.</p>
+            <p class="mt-2">Hecho por alumnos 3°1 - cens452 .</p>
+        </div>
+    </footer>
+
+    <a href="#top" id="backToTopBtn" class="fixed-button fixed bottom-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-full shadow-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300 ease-in-out text-base md:text-lg px-5 py-2.5 md:px-6 md:py-3">
+        Volver Arriba
+    </a>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const backToTopBtn = document.getElementById('backToTopBtn');
+        const voteForm = document.getElementById('voteForm');
+        const messageDiv = document.getElementById('message');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('active');
+        }
+
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                }
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                if (mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                }
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+
+        // --- Lógica para manejar el envío del formulario de votación ---
+
+        voteForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Evita el envío del formulario por defecto
+
+            const voterName = document.getElementById('voterName').value;
+            const voterLastName = document.getElementById('voterLastName').value;
+            const soap = document.getElementById('soapSelect').value;
+
+            if (!voterName || !voterLastName || !soap) {
+                messageDiv.textContent = 'Por favor, completa todos los campos.';
+                messageDiv.className = 'mt-4 text-center text-sm font-semibold text-red-600';
+                return;
+            }
+
+            const vote = {
+                voterName: voterName,
+                voterLastName: voterLastName,
+                soap: soap,
+                timestamp: new Date().toISOString()
+            };
+
+            // Recupera votos existentes o inicializa un array vacío
+            let votes = JSON.parse(localStorage.getItem('soapVotes')) || [];
+
+            // Agrega el nuevo voto
+            votes.push(vote);
+
+            // Guarda el array actualizado en localStorage
+            localStorage.setItem('soapVotes', JSON.stringify(votes));
+
+            messageDiv.textContent = '¡Gracias por tu voto!';
+            messageDiv.className = 'mt-4 text-center text-sm font-semibold text-green-600';
+
+            // Opcional: Limpiar el formulario después de enviar
+            voteForm.reset();
+
+            // Opcional: Redirigir a la página de resultados después de un breve retraso
+            setTimeout(() => {
+                window.location.href = 'results.html';
+            }, 1500); // Redirige después de 1.5 segundos
+        });
+    </script>
+
+</body>
+</html>
