@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comentarios</title>
+    <style>
+        /* Aquí va tu CSS */
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        #commentForm, #commentsContainer {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: calc(100% - 10px);
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .comment {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .comment:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Sistema de Comentarios</h1>
+
+    <form id="commentForm">
+        <label for="comment">Deja tu comentario:</label><br>
+        <textarea id="comment" name="comment" rows="4" cols="50" placeholder="Escribe tu comentario aquí..."></textarea><br>
+        <button type="submit">Enviar Comentario</button>
+    </form>
+
+    <h2>Comentarios:</h2>
+    <div id="commentsContainer">
+        </div>
+
+    <script>
+        // Aquí va tu JavaScript
+        function loadComments() {
+            // En un escenario real, esta URL apuntaría a tu script de backend
+            fetch('/get-comments') // Por ejemplo, 'get-comments.php' si usas PHP
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(comments => {
+                    const commentsContainer = document.getElementById('commentsContainer');
+                    commentsContainer.innerHTML = ''; // Limpiar comentarios existentes
+                    if (comments.length === 0) {
+                        commentsContainer.innerHTML = '<p>Aún no hay comentarios. ¡Sé el primero en comentar!</p>';
+                    } else {
+                        comments.forEach(comment => {
+                            const p = document.createElement('p');
+                            p.classList.add('comment');
+                            p.textContent = comment.text;
+                            commentsContainer.appendChild(p);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar comentarios:', error);
+                    document.getElementById('commentsContainer').innerHTML = '<p style="color: red;">No se pudieron cargar los comentarios. Asegúrate de que el servidor está funcionando.</p>';
+                });
+        }
+
+        document.getElementById('commentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const commentText = document.getElementById('comment').value;
+
+            if (!commentText.trim()) {
+                alert('Por favor, escribe un comentario antes de enviar.');
+                return;
+            }
+
+            // En un escenario real, esta URL apuntaría a tu script de backend
+            fetch('/submit-comment', { // Por ejemplo, 'submit-comment.php' si usas PHP
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ comment: commentText })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('Comentario enviado exitosamente!');
+                    document.getElementById('comment').value = '';
+                    loadComments(); // Recargar comentarios para mostrar el nuevo
+                } else {
+                    alert('Hubo un error al enviar el comentario.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error de conexión con el servidor. No se pudo enviar el comentario.');
+            });
+        });
+
+        // Cargar comentarios cuando la página termina de cargarse
+        document.addEventListener('DOMContentLoaded', loadComments);
+    </script>
+</body>
+                                                                                                               </html>
+                                                                                                               
