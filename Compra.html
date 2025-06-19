@@ -2,62 +2,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alquimia Natural - Tienda</title>
+  <title>Tienda de Jabones</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body class="bg-gray-50 font-sans"><!-- NAVBAR --><nav class="bg-green-800 p-4 text-white sticky top-0 z-50">
-  <div class="container mx-auto flex justify-between items-center">
-    <a href="#" class="text-2xl font-bold flex items-center">
-      <img src="imagen/unnamed.png" alt="Logo" class="h-10 w-auto mr-3 rounded-full">Alquimia Natural
-    </a>
-    <button id="mobileMenuButton" class="md:hidden focus:outline-none">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-      </svg>
-    </button>
-    <div class="hidden md:flex space-x-6">
-      <a href="#productos" class="hover:text-green-200">Productos</a>
-      <a href="#contacto" class="hover:text-green-200">Contacto</a>
+<body class="bg-green-50 font-sans">  <!-- Encabezado -->  <nav class="bg-green-800 p-4 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center">
+      <a href="#" class="text-white text-2xl font-bold flex items-center">
+        <img src="https://via.placeholder.com/50" alt="Logo" class="h-10 w-10 mr-2 rounded-full">
+        Tienda de Jabones
+      </a>
     </div>
-  </div>
-  <div id="mobileMenu" class="mobile-menu md:hidden hidden mt-2 px-4">
-    <a href="#productos" class="block py-2">Productos</a>
-    <a href="#contacto" class="block py-2">Contacto</a>
-  </div>
-</nav><!-- CONTENIDO PRINCIPAL --><main class="container mx-auto py-10" id="productos">
-  <h1 class="text-center text-3xl font-bold text-green-800 mb-6">Tienda de Jabones Naturales</h1>
-  <div class="space-y-4">
-    <div class="flex justify-between items-center bg-white p-4 rounded shadow">
+  </nav>  <!-- Productos -->  <h1 class="text-3xl text-center text-green-800 font-semibold mt-6 mb-4">Nuestros Productos</h1>
+  <div class="max-w-xl mx-auto space-y-4">
+    <div class="bg-white p-4 rounded shadow flex justify-between items-center">
       <span>Jabón de Lavanda - $3.00</span>
-      <button onclick="comprar('Jabón de Lavanda', 3.00)" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Comprar</button>
+      <button onclick="comprar('Jabón de Lavanda', 3.00)" class="bg-green-600 text-white px-4 py-2 rounded">Comprar</button>
     </div>
-    <div class="flex justify-between items-center bg-white p-4 rounded shadow">
+    <div class="bg-white p-4 rounded shadow flex justify-between items-center">
       <span>Jabón de Aloe Vera - $3.50</span>
-      <button onclick="comprar('Jabón de Aloe Vera', 3.50)" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Comprar</button>
+      <button onclick="comprar('Jabón de Aloe Vera', 3.50)" class="bg-green-600 text-white px-4 py-2 rounded">Comprar</button>
     </div>
-    <div class="flex justify-between items-center bg-white p-4 rounded shadow">
+    <div class="bg-white p-4 rounded shadow flex justify-between items-center">
       <span>Jabón de Miel - $4.00</span>
-      <button onclick="comprar('Jabón de Miel', 4.00)" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Comprar</button>
+      <button onclick="comprar('Jabón de Miel', 4.00)" class="bg-green-600 text-white px-4 py-2 rounded">Comprar</button>
     </div>
-    <div class="flex justify-between items-center bg-white p-4 rounded shadow">
+    <div class="bg-white p-4 rounded shadow flex justify-between items-center">
       <span>Jabón de Coco - $4.50</span>
-      <button onclick="comprar('Jabón de Coco', 4.50)" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Comprar</button>
+      <button onclick="comprar('Jabón de Coco', 4.50)" class="bg-green-600 text-white px-4 py-2 rounded">Comprar</button>
     </div>
-    <div class="flex justify-between items-center bg-white p-4 rounded shadow">
+    <div class="bg-white p-4 rounded shadow flex justify-between items-center">
       <span>Jabón de Piedra - $10.00</span>
-      <button onclick="comprar('Jabón de Piedra', 10.00)" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Comprar</button>
+      <button onclick="comprar('Jabón de Piedra', 10.00)" class="bg-green-600 text-white px-4 py-2 rounded">Comprar</button>
     </div>
-  </div>
-  <div class="mt-6 text-center">
-    <button id="finalizar" onclick="mostrarFactura()" class="hidden bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded">Finalizar Compra</button>
-    <button id="descargarPDF" onclick="generarPDF()" class="hidden bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded mt-4">Descargar PDF</button>
-  </div>  <div class="factura bg-white shadow-lg rounded p-6 mt-10 hidden" id="factura">
+  </div>  <!-- Botones -->  <div class="text-center my-6">
+    <button id="finalizar" onclick="mostrarFactura()" class="hidden bg-blue-600 text-white px-6 py-2 rounded">Finalizar Compra</button>
+    <button id="descargarPDF" onclick="generarPDF()" class="hidden bg-red-600 text-white px-6 py-2 rounded">Descargar PDF</button>
+  </div>  <!-- Factura -->  <div id="factura" class="hidden max-w-3xl mx-auto bg-white p-6 rounded shadow mb-12">
     <div id="contenidoFactura">
       <div class="flex justify-between items-center mb-4">
-        <img src="https://via.placeholder.com/150x60?text=LOGO" id="logo" alt="Logo" class="h-16">
-        <div>
+        <img src="https://via.placeholder.com/150x60?text=LOGO" id="logo" alt="Logo" class="h-12">
+        <div class="text-sm text-right">
           <strong>Tienda de Jabones</strong><br>
           contacto@jabones.com<br>
           Tel: +54 9 123 456 789
@@ -67,7 +53,7 @@
         <p><strong>Fecha:</strong> <span id="fechaFactura"></span></p>
         <p><strong>Número de Factura:</strong> <span id="numeroFactura"></span></p>
       </div>
-      <table class="w-full border text-sm">
+      <table class="w-full text-sm border border-gray-300">
         <thead>
           <tr class="bg-gray-100">
             <th class="border px-2 py-1">Producto</th>
@@ -80,93 +66,85 @@
         <tfoot>
           <tr>
             <td colspan="3" class="text-right font-bold px-2 py-1">Total:</td>
-            <td id="totalFactura" class="px-2 py-1">$0.00</td>
+            <td id="totalFactura" class="border px-2 py-1">$0.00</td>
           </tr>
         </tfoot>
       </table>
     </div>
-  </div>
-</main><!-- FOOTER --><footer class="bg-green-800 text-white py-6 mt-10">
-  <div class="container mx-auto text-center">
-    <p>&copy; 2025 Alquimia Natural - Todos los derechos reservados.</p>
-    <p>Hecho por alumnos de 3°1 - CENS 452</p>
-  </div>
-</footer><script>
-  let carrito = [];
-  let contadorFactura = parseInt(localStorage.getItem('contadorFactura')) || 1;
+  </div>  <!-- Pie de página -->  <footer class="bg-green-800 text-white text-center py-4">
+    <p>&copy; 2025 Jabones Artesanales - Hecho por alumnos 3º1 - CENS 452.</p>
+  </footer>  <script>
+    let carrito = [];
+    let contadorFactura = parseInt(localStorage.getItem('contadorFactura')) || 1;
 
-  function comprar(nombre, precio) {
-    const producto = carrito.find(p => p.nombre === nombre);
-    if (producto) {
-      producto.cantidad += 1;
-      producto.subtotal = producto.cantidad * producto.precio;
-    } else {
-      carrito.push({ nombre, precio, cantidad: 1, subtotal: precio });
+    function comprar(nombre, precio) {
+      const producto = carrito.find(p => p.nombre === nombre);
+      if (producto) {
+        producto.cantidad += 1;
+        producto.subtotal = producto.cantidad * producto.precio;
+      } else {
+        carrito.push({ nombre, precio, cantidad: 1, subtotal: precio });
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Producto agregado',
+        text: `${nombre} agregado al carrito.`,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: '#28a745',
+        color: '#fff',
+      });
+
+      document.getElementById('finalizar').classList.remove('hidden');
     }
 
-    mostrarNotificacion(`${nombre} agregado al carrito.`);
-    document.getElementById('finalizar').classList.remove('hidden');
-  }
+    function mostrarFactura() {
+      const tabla = document.getElementById('detalleFactura');
+      tabla.innerHTML = '';
+      let total = 0;
 
-  function mostrarFactura() {
-    const tabla = document.getElementById('detalleFactura');
-    tabla.innerHTML = '';
-    let total = 0;
+      carrito.forEach(p => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td class="border px-2 py-1">${p.nombre}</td>
+          <td class="border px-2 py-1">$${p.precio.toFixed(2)}</td>
+          <td class="border px-2 py-1">${p.cantidad}</td>
+          <td class="border px-2 py-1">$${p.subtotal.toFixed(2)}</td>
+        `;
+        tabla.appendChild(fila);
+        total += p.subtotal;
+      });
 
-    carrito.forEach(p => {
-      const fila = document.createElement('tr');
-      fila.innerHTML = `
-        <td class="border px-2 py-1">${p.nombre}</td>
-        <td class="border px-2 py-1">$${p.precio.toFixed(2)}</td>
-        <td class="border px-2 py-1">${p.cantidad}</td>
-        <td class="border px-2 py-1">$${p.subtotal.toFixed(2)}</td>
-      `;
-      tabla.appendChild(fila);
-      total += p.subtotal;
-    });
+      document.getElementById('totalFactura').textContent = `$${total.toFixed(2)}`;
+      document.getElementById('factura').classList.remove('hidden');
+      document.getElementById('descargarPDF').classList.remove('hidden');
 
-    document.getElementById('totalFactura').textContent = `$${total.toFixed(2)}`;
-    document.getElementById('factura').classList.remove('hidden');
-    document.getElementById('descargarPDF').classList.remove('hidden');
+      const hoy = new Date();
+      document.getElementById('fechaFactura').textContent = hoy.toLocaleDateString();
+      const numero = 'FAC-' + contadorFactura.toString().padStart(6, '0');
+      document.getElementById('numeroFactura').textContent = numero;
+      contadorFactura++;
+      localStorage.setItem('contadorFactura', contadorFactura);
+    }
 
-    const hoy = new Date();
-    document.getElementById('fechaFactura').textContent = hoy.toLocaleDateString();
+    function generarPDF() {
+      const factura = document.getElementById('factura');
+      const contenido = document.getElementById('contenidoFactura');
+      factura.classList.remove('hidden');
 
-    const numero = 'FAC-' + contadorFactura.toString().padStart(6, '0');
-    document.getElementById('numeroFactura').textContent = numero;
-    contadorFactura++;
-    localStorage.setItem('contadorFactura', contadorFactura);
-  }
+      const opt = {
+        margin: 10,
+        filename: 'factura_jabones.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
 
-  function generarPDF() {
-    const element = document.getElementById('contenidoFactura');
-    const opt = {
-      margin: 10,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().set(opt).from(element).save('factura_jabones.pdf');
-  }
-
-  function mostrarNotificacion(mensaje) {
-    Swal.fire({
-      icon: 'success',
-      title: 'Producto agregado',
-      text: mensaje,
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 2500,
-      timerProgressBar: true,
-      background: '#28a745',
-      color: '#fff',
-    });
-  }
-
-  document.getElementById('mobileMenuButton').addEventListener('click', () => {
-    const menu = document.getElementById('mobileMenu');
-    menu.classList.toggle('hidden');
-  });
-</script></body>
-              </html>
+      html2pdf().set(opt).from(contenido).save();
+    }
+  </script></body>
+  </html>
