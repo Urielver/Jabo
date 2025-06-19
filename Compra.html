@@ -203,7 +203,17 @@
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
-      html2pdf().set(opt).from(element).save('factura_jabones.pdf');
+      html2pdf().set(opt).from(element).outputPdf('blob').then(function(pdfBlob) {
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        window.open(blobUrl, '_blank');
+
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = 'factura_jabones.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
     }
   </script>
 
