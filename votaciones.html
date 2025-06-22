@@ -49,16 +49,39 @@
             display: block;
         }
     </style>
-</head>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // TU CONFIGURACIÓN DE FIREBASE (¡REEMPLAZA ESTOS VALORES CON LOS DE TU PROYECTO REAL!)
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_AUTH_DOMAIN",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_STORAGE_BUCKET",
+            messagingSenderId: "TU_MESSAGING_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+
+        // Inicializa Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Haz que 'db' y 'votesCollection' sean accesibles globalmente para el script principal
+        // Esto simplifica el acceso en el script de abajo.
+        window.db = db;
+        window.votesCollection = collection(db, "soapVotes"); // 'soapVotes' es el nombre de tu colección en Firestore
+    </script>
+    </head>
 <body>
 
-    
     <nav class="dark-green-bg p-4 shadow-lg sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
             <a href="#top" class="text-black-200 text-4xl font-bold flex items-center soft-green-text">
                 <img src="imagen/logo4.png"
-                     alt="Logo Alquimia Natural"
-                     class="h-20 w-auto mr-7 rounded-full"><span class="font-decorative underline">Alquimia Natural</span>
+                    alt="Logo Alquimia Natural"
+                    class="h-20 w-auto mr-7 rounded-full"><span class="font-decorative underline">Alquimia Natural</span>
             </a>
 
             <button id="mobileMenuButton" class="text-gren md:hidden focus:outline-none">
@@ -73,10 +96,10 @@
                 <a href="#alumnos" class="text-white hover:text-green-200 transition duration-300">Alumnos</a>
                 <a href="#contacto" class="text-white hover:text-green-200 transition duration-300">Contacto</a>
                 <a href="#proyecto" class="text-white hover:text-green-200 transition duration-300">Otro Proyecto</a>
-                 <a href="gracias.html" class="text-white hover:text-green-200 transition duration-300">Gracias</a>
+                <a href="gracias.html" class="text-white hover:text-green-200 transition duration-300">Gracias</a>
                 <a href="results.html" class="text-white hover:text-green-200 transition duration-300">Resultados</a>
-                 <a href="tarjeta.html" class="text-white hover:text-green-200 transition duration-300">Tarjeta</a>
-                 <a href="compras.html" class="text-white hover:text-green-200 transition duration-300">Comprar</a>
+                <a href="tarjeta.html" class="text-white hover:text-green-200 transition duration-300">Tarjeta</a>
+                <a href="compras.html" class="text-white hover:text-green-200 transition duration-300">Comprar</a>
                 <a href="votaciones.html" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition duration-300 ease-in-out">Votar</a>
             </div>
         </div>
@@ -87,9 +110,9 @@
             <a href="#alumnos" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Alumnos</a>
             <a href="#contacto" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Contacto</a>
             <a href="#proyecto" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Otro Proyecto</a>
-             <a href="tarjeta.html" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Tarjeta</a>
-              <a href="gracias.html" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Gracias</a>
-             <a href="results.html" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Resultado</a>
+            <a href="tarjeta.html" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Tarjeta</a>
+            <a href="gracias.html" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Gracias</a>
+            <a href="results.html" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Resultado</a>
             <a href="compras.html" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300" >Compra</a>
             <a href="votaciones.html" class="block bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition duration-300 ease-in-out mt-2 text-center">Votar</a>
         </div>
@@ -111,6 +134,44 @@
     ---
 
     <section id="vote-section" class="py-16 md:py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-green-800">Vota por tu Jabón Favorito</h2>
+            <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <form id="voteForm">
+                    <div class="mb-4">
+                        <label for="voterName" class="block text-gray-700 text-sm font-bold mb-2">Nombre:</label>
+                        <input type="text" id="voterName" name="voterName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="voterLastName" class="block text-gray-700 text-sm font-bold mb-2">Apellido:</label>
+                        <input type="text" id="voterLastName" name="voterLastName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="soapSelect" class="block text-gray-700 text-sm font-bold mb-2">Selecciona tu Jabón:</label>
+                        <select id="soapSelect" name="soap" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" required>
+                            <option value="">-- Por favor, elige una opción --</option>
+                            <option value="Jabon de Lavanda">Jabón de Lavanda</option>
+                            <option value="Jabon de Avena y Miel">Jabón de Avena y Miel</option>
+                            <option value="Jabon de Caléndula">Jabón de Caléndula</option>
+                            <option value="Jabon de Carbon Activado">Jabón de Carbón Activado</option>
+                            <option value="Jabon de Romero y Menta">Jabón de Romero y Menta</option>
+                            <option value="Jabon de Coco y Vainilla">Jabón de Coco y Vainilla</option>
+                            <option value="Jabon de Arbol de Te y Eucalipto">Jabón de Árbol de Té y Eucalipto</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                            Enviar Voto
+                        </button>
+                    </div>
+                </form>
+                <div id="message" class="mt-4 text-center text-sm font-semibold"></div>
+            </div>
+        </div>
+    </section>
+
+    ---
+ <section id="vote-section" class="py-16 md:py-20 bg-gray-50">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-green-800">Vota por tu Jabón Favorito</h2>
             <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
@@ -240,6 +301,5 @@
             }, 1500); // Redirige después de 1.5 segundos
         });
     </script>
-
 </body>
 </html>

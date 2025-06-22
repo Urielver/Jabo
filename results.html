@@ -1,398 +1,549 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alquimia Natural – Resultados de Votación</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alquimia Natural – Resultados de Votación</title>
 
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Fuentes -->
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet"/>
 
-  <style>
-    /* ---------- Variables de diseño ---------- */
-    body{font-family:'Inter',sans-serif;background:#f7fafc;scroll-behavior:smooth;}
+    <style>
+        /* ---------- Variables de diseño ---------- */
+        body {
+            font-family: 'Inter', sans-serif; /* Asegúrate de que esta fuente esté enlazada si la usas */
+            background: #f7fafc;
+            scroll-behavior: smooth;
+        }
 
-    .font-decorative{font-family:'Dancing Script',cursive;}
-    .soft-green-bg{background:#D1FAE5;}
-    .soft-green-text{color:#01130d;}
-    .dark-green-bg{
-      background:url(imagen/Jabon-de-lavanda-768x432.jpg) center/cover no-repeat;
-    }
-    .dark-green-text{color:#065F46;}
+        .font-decorative {
+            font-family: 'Dancing Script', cursive;
+        }
 
-    /* Altura pantalla menos header (≈80 px) */
-    .min-h-screen-minus-header{min-height:calc(100vh - 80px);}
+        .soft-green-bg {
+            background: #D1FAE5;
+        }
 
-    /* Transiciones menú móvil */
-    .mobile-menu{max-height:0;overflow:hidden;transition:max-height .3s ease-out;}
-    .mobile-menu.active{max-height:500px;transition:max-height .3s ease-in;}
+        .soft-green-text {
+            color: #01130d;
+        }
 
-    /* Botón flotante “volver arriba” */
-    .fixed-button{display:none;}
-    .fixed-button.show{display:block;}
+        .dark-green-bg {
+            background: url(imagen/Jabon-de-lavanda-768x432.jpg) center/cover no-repeat;
+        }
 
-    /* ----------- Tabla estilo Excel ---------- */
-    .excel-table-container{overflow-x:auto;border:1px solid #e2e8f0;border-radius:.5rem;box-shadow:0 1px 3px rgba(0,0,0,.1);}
-    .excel-table{width:100%;border-collapse:collapse;min-width:600px;}
-    .excel-table th,.excel-table td{border:1px solid #cbd5e0;padding:.75rem;text-align:left;}
-    .excel-table th{background:#edf2f7;font-weight:600;color:#2d3748;text-transform:uppercase;font-size:.875rem;}
-    .excel-table tbody tr:nth-child(even){background:#f7fafc;}
-    .excel-table tbody tr:hover{background:#e2e8f0;transition:background-color .2s;}
+        .dark-green-text {
+            color: #065F46;
+        }
 
-    /* Texto de sección */
-    .textoresul{padding:10px;}
-  </style>
-</head>
+        .min-h-screen-minus-header {
+            min-height: calc(100vh - 80px);
+        }
+
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .3s ease-out;
+        }
+
+        .mobile-menu.active {
+            max-height: 500px;
+            transition: max-height .3s ease-in;
+        }
+
+        .fixed-button {
+            display: none;
+        }
+
+        .fixed-button.show {
+            display: block;
+        }
+
+        /* ----------- Tabla estilo Excel ---------- */
+        .excel-table-container {
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: .5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+        }
+
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .excel-table th,
+        .excel-table td {
+            border: 1px solid #cbd5e0;
+            padding: .75rem;
+            text-align: left;
+        }
+
+        .excel-table th {
+            background: #edf2f7;
+            font-weight: 600;
+            color: #2d3748;
+            text-transform: uppercase;
+            font-size: .875rem;
+        }
+
+        .excel-table tbody tr:nth-child(even) {
+            background: #f7fafc;
+        }
+
+        .excel-table tbody tr:hover {
+            background: #e2e8f0;
+            transition: background-color .2s;
+        }
+
+        .textoresul {
+            padding: 10px;
+        }
+    </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // TU CONFIGURACIÓN DE FIREBASE (¡REEMPLAZA ESTOS VALORES CON LOS DE TU PROYECTO!)
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_AUTH_DOMAIN",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_STORAGE_BUCKET",
+            messagingSenderId: "TU_MESSAGING_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+
+        // Inicializa Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Haz que 'db' y 'votesCollection' sean accesibles globalmente para el script principal
+        // (considera refactorizar para evitar globales en un proyecto grande).
+        window.db = db;
+        window.votesCollection = collection(db, "soapVotes"); // 'soapVotes' es el nombre de tu colección en Firestore
+    </script>
+    </head>
 <body class="relative" id="top">
-  <!-- ====== NAV ====== -->
-  <nav class="dark-green-bg p-4 shadow-lg sticky top-0 z-50">
-    <div class="container mx-auto flex justify-between items-center">
-      <a href="#top" class="text-4xl font-bold flex items-center soft-green-text">
-        <img src="imagen/logo4.png" alt="Logo Alquimia Natural"
-             class="h-20 w-auto mr-7 rounded-full" />
-        <span class="font-decorative underline">Alquimia Natural</span>
-      </a>
+    <nav class="dark-green-bg p-4 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#top" class="text-4xl font-bold flex items-center soft-green-text">
+                <img src="imagen/logo4.png" alt="Logo Alquimia Natural" class="h-20 w-auto mr-7 rounded-full" />
+                <span class="font-decorative underline">Alquimia Natural</span>
+            </a>
 
-      <!-- Btn hamburguesa -->
-      <button id="mobileMenuButton" aria-label="Abrir menú móvil"
-              class="text-black md:hidden focus:outline-none">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor"
-             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round"
-                stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-      </button>
+            <button id="mobileMenuButton" aria-label="Abrir menú móvil" class="text-black md:hidden focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
 
-      <!-- Menú escritorio -->
-      <div class="hidden md:flex space-x-6 items-center">
-        <a href="inicio.html"      class="text-white hover:text-green-200">Inicio</a>
-        <a href="#como-hacer"      class="text-white hover:text-green-200">Cómo Hacer</a>
-        <a href="results.html"     class="text-white hover:text-green-200">Resultados</a>
-        <a href="tarjeta.html"     class="text-white hover:text-green-200">Tarjeta</a>
-        <a href="compras.html"     class="text-white hover:text-green-200">Comprar</a>
-        <a href="votaciones.html"  class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition">
-          Votar
-        </a>
-        <!-- Botón logout (oculto por defecto) -->
-        <button id="logoutButtonNav"
-                class="hidden bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition">
-          Cerrar Sesión
-        </button>
-      </div>
-    </div>
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="inicio.html" class="text-white hover:text-green-200">Inicio</a>
+                <a href="#como-hacer" class="text-white hover:text-green-200">Cómo Hacer</a>
+                <a href="results.html" class="text-white hover:text-green-200">Resultados</a>
+                <a href="tarjeta.html" class="text-white hover:text-green-200">Tarjeta</a>
+                <a href="compras.html" class="text-white hover:text-green-200">Comprar</a>
+                <a href="votaciones.html"
+                    class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition">
+                    Votar
+                </a>
+                <button id="logoutButtonNav"
+                    class="hidden bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
 
-    <!-- Menú móvil -->
-    <div id="mobileMenu" class="mobile-menu md:hidden mt-4 space-y-2">
-      <a href="inicio.html"     class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Inicio</a>
-      <a href="gracias.html"    class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Gracias</a>
-      <a href="tarjeta.html"    class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Tarjeta</a>
-      <a href="results.html"    class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Resultado</a>
-      <a href="compras.html"    class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Compra</a>
-      <a href="votaciones.html" class="block bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 text-center mt-1">
-        Votar
-      </a>
-      <!-- Botón logout móvil -->
-      <button id="logoutButtonMobile"
-              class="hidden w-full bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-700 mt-1">
-        Cerrar Sesión
-      </button>
-    </div>
-  </nav>
+        <div id="mobileMenu" class="mobile-menu md:hidden mt-4 space-y-2">
+            <a href="inicio.html" class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Inicio</a>
+            <a href="gracias.html" class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Gracias</a>
+            <a href="tarjeta.html" class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Tarjeta</a>
+            <a href="results.html" class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Resultados</a>
+            <a href="compras.html" class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Comprar</a>
+            <a href="votaciones.html"
+                class="block bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 text-center mt-1">
+                Votar
+            </a>
+            <button id="logoutButtonMobile"
+                class="hidden w-full bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-700 mt-1">
+                Cerrar Sesión
+            </button>
+        </div>
+    </nav>
 
-  <!-- ====== CONTENIDO ====== -->
-  <div class="textoresul">
-    <!-- Hero -->
-    <section id="results-hero" class="soft-green-bg py-16 md:py-24 text-center">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl md:text-4xl font-semibold mb-6 text-green-800">
-          Resultados de Votación de Jabones
-        </h2>
-        <p class="text-lg md:text-xl text-green-700 max-w-3xl mx-auto">
-          Aquí puedes ver todas las votaciones registradas.
-        </p>
-      </div>
+    <div class="textoresul">
+        <section id="results-hero" class="soft-green-bg py-16 md:py-24 text-center">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-semibold mb-6 text-green-800">
+                    Resultados de Votación de Jabones
+                </h2>
+                <p class="text-lg md:text-xl text-green-700 max-w-3xl mx-auto">
+                    Aquí puedes ver todas las votaciones registradas.
+                </p>
+            </div>
+        </section>
+
+    <section id="login-section" class="py-16 md:py-20 bg-gray-50 flex items-center justify-center min-h-screen-minus-header">
+        <div class="container mx-auto px-4">
+            <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-green-800">Acceso a Resultados</h2>
+                <form id="loginForm">
+                    <div class="mb-4">
+                        <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Usuario:</label>
+                        <input type="text" id="username" name="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Contraseña:</label>
+                        <input type="password" id="password" name="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                            Iniciar Sesión
+                        </button>
+                    </div>
+                    <div id="loginMessage" class="mt-4 text-center text-sm font-semibold text-red-600"></div>
+                </form>
+            </div>
+        </div>
     </section>
 
-    <!-- Login -->
-    <section id="login-section"
-             class="py-16 md:py-20 bg-gray-50 flex items-center justify-center min-h-screen-minus-header">
-      <div class="max-w-md bg-white p-8 rounded-lg shadow-lg mx-4">
-        <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-green-800">
-          Acceso a Resultados
-        </h2>
-        <form id="loginForm">
-          <label class="block mb-4">
-            <span class="text-sm font-bold text-gray-700">Usuario:</span>
-            <input id="username" name="username" type="text" required
-                   class="mt-1 block w-full border rounded py-2 px-3 shadow focus:outline-none focus:ring focus:border-green-300" />
-          </label>
-          <label class="block mb-6">
-            <span class="text-sm font-bold text-gray-700">Contraseña:</span>
-            <input id="password" name="password" type="password" required
-                   class="mt-1 block w-full border rounded py-2 px-3 shadow focus:outline-none focus:ring focus:border-green-300" />
-          </label>
-          <button type="submit"
-                  class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded focus:outline-none">
-            Iniciar Sesión
-          </button>
-          <div id="loginMessage" class="mt-4 text-center text-sm font-semibold text-red-600"></div>
-        </form>
-      </div>
-    </section>
-
-    <!-- Resultados (ocultos hasta login) -->
     <section id="results-content" class="py-16 md:py-20 bg-gray-50 hidden">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-green-800">Detalle de Votaciones</h2>
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-green-800">Detalle de Votaciones</h2>
+            <div class="excel-table-container">
+                <table id="votesTable" class="excel-table">
+                    <thead>
+                        <tr>
+                            <th>Nº Persona</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Jabón Votado</th>
+                            <th>Fecha y Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-8">
+                <p class="text-lg text-gray-700">Total de Votos: <span id="totalVotes" class="font-bold">0</span></p>
+            </div>
 
-        <!-- Tabla votos -->
-        <div class="excel-table-container">
-          <table id="votesTable" class="excel-table">
-            <thead>
-              <tr>
-                <th>Nº Persona</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Jabón Votado</th>
-                <th>Fecha y Hora</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+            <div class="text-center mt-12 p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-bold mb-4 text-green-800">¡Realizar Sorteo!</h3>
+                <button id="drawButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline text-lg">
+                    Realizar Sorteo
+                </button>
+                <div id="drawResults" class="mt-6 p-4 border border-green-300 bg-green-50 rounded-md text-green-900 font-semibold hidden">
+                    <p class="text-xl mb-2">¡El/Los Ganador/es es/son:</p>
+                    <ul id="winnerList" class="list-disc list-inside text-left mx-auto max-w-sm">
+                        </ul>
+                </div>
+                <button id="resetDrawButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-4 hidden">
+                    Reiniciar Sorteo
+                </button>
+            </div>
+
+            <div class="text-center mt-12 p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-bold mb-4 text-green-800">Clasificación de Votos por Jabón</h3>
+                <div id="soapClassification" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg">
+                    </div>
+            </div>
+
+            <div class="text-center mt-12 p-6 bg-white rounded-lg shadow-md">
+                <h3 class="text-2xl font-bold mb-4 text-green-800">Estadísticas Generales</h3>
+                <p class="text-lg text-gray-700 mb-2">Total de Personas que Votaron: <span id="uniqueVoters" class="font-bold">0</span></p>
+                <p class="text-lg text-gray-700">Visitas a la Página Principal (index.html): <span id="pageVisitsCount" class="font-bold">0</span></p>
+            </div>
+
+            <div class="text-center mt-12 p-6 bg-red-50 rounded-lg shadow-md border-red-300 border">
+                <h3 class="text-2xl font-bold mb-4 text-red-800">Administración</h3>
+                <button id="resetVotesButton" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-4">
+                    Restablecer Votaciones
+                </button>
+                <button id="logoutButton" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Cerrar Sesión
+                </button>
+            </div>
+
         </div>
-        <p class="text-center mt-6 text-lg">
-          Total de Votos: <span id="totalVotes" class="font-bold">0</span>
-        </p>
-
-        <!-- Sorteo -->
-        <div class="text-center mt-12 p-6 bg-white rounded-lg shadow-md">
-          <h3 class="text-2xl font-bold mb-4 text-green-800">¡Realizar Sorteo!</h3>
-          <button id="drawButton"
-                  class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full focus:outline-none text-lg">
-            Realizar Sorteo
-          </button>
-
-          <!-- Resultado sorteo -->
-          <div id="drawResults"
-               class="mt-6 p-4 border border-green-300 bg-green-50 rounded-md text-green-900 font-semibold hidden">
-            <p class="text-xl mb-2">¡El/Los Ganador/es es/son:</p>
-            <ul id="winnerList" class="list-disc list-inside text-left mx-auto max-w-sm"></ul>
-          </div>
-          <button id="resetDrawButton"
-                  class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-4 hidden">
-            Reiniciar Sorteo
-          </button>
-        </div>
-
-        <!-- Clasificación -->
-        <div class="text-center mt-12 p-6 bg-white rounded-lg shadow-md">
-          <h3 class="text-2xl font-bold mb-4 text-green-800">Clasificación de Votos por Jabón</h3>
-          <div id="soapClassification"
-               class="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg"></div>
-        </div>
-
-        <!-- Estadísticas -->
-        <div class="text-center mt-12 p-6 bg-white rounded-lg shadow-md">
-          <h3 class="text-2xl font-bold mb-4 text-green-800">Estadísticas Generales</h3>
-          <p class="text-lg text-gray-700 mb-2">
-            Total de Personas que Votaron: <span id="uniqueVoters" class="font-bold">0</span>
-          </p>
-          <p class="text-lg text-gray-700">
-            Visitas a la Página Principal (index.html): <span id="pageVisitsCount" class="font-bold">0</span>
-          </p>
-        </div>
-
-        <!-- Administración -->
-        <div class="text-center mt-12 p-6 bg-red-50 rounded-lg shadow-md border-red-300">
-          <h3 class="text-2xl font-bold mb-4 text-red-800">Administración</h3>
-          <button id="resetVotesButton"
-                  class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-4">
-            Restablecer Votaciones
-          </button>
-          <button id="logoutButton"
-                  class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-            Cerrar Sesión
-          </button>
-        </div>
-      </div>
     </section>
-  </div>
+    <footer class="bg-green-800 text-white py-8 text-center">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2025 Jabones Artesanales. Todos los derechos reservados.</p>
+            <p class="mt-2">Hecho por alumnos 3°1 - cens452 .</p>
+        </div>
+    </footer>
 
-  <!-- Btn volver arriba -->
-  <a id="backToTopBtn"
-     href="#top"
-     class="fixed-button fixed bottom-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-full shadow-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition">
-    Volver Arriba
-  </a>
+    <a href="#top" id="backToTopBtn" class="fixed-button fixed bottom-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-full shadow-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300 ease-in-out text-base md:text-lg px-5 py-2.5 md:px-6 md:py-3">
+        Volver Arriba
+    </a>
 
-  <!-- ====== SCRIPTS ====== -->
-  <script>
-    /* ---- Variables de elementos ---- */
-    const mobileMenuButton = document.getElementById('mobileMenuButton');
-    const mobileMenu        = document.getElementById('mobileMenu');
-    const backToTopBtn      = document.getElementById('backToTopBtn');
-    const votesTableBody    = document.querySelector('#votesTable tbody');
-    const totalVotesSpan    = document.getElementById('totalVotes');
-    const drawButton        = document.getElementById('drawButton');
-    const drawResultsDiv    = document.getElementById('drawResults');
-    const winnerList        = document.getElementById('winnerList');
-    const resetDrawButton   = document.getElementById('resetDrawButton');
-    const soapClassificationDiv = document.getElementById('soapClassification');
-    const uniqueVotersSpan  = document.getElementById('uniqueVoters');
-    const pageVisitsCountSpan = document.getElementById('pageVisitsCount');
+    <script>
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const backToTopBtn = document.getElementById('backToTopBtn');
+        const votesTableBody = document.querySelector('#votesTable tbody');
+        const totalVotesSpan = document.getElementById('totalVotes');
+        const drawButton = document.getElementById('drawButton');
+        const drawResultsDiv = document.getElementById('drawResults');
+        const winnerList = document.getElementById('winnerList');
+        const resetDrawButton = document.getElementById('resetDrawButton');
+        const soapClassificationDiv = document.getElementById('soapClassification');
+        const uniqueVotersSpan = document.getElementById('uniqueVoters');
+        const pageVisitsCountSpan = document.getElementById('pageVisitsCount');
 
-    const loginSection  = document.getElementById('login-section');
-    const resultsContent = document.getElementById('results-content');
-    const loginForm     = document.getElementById('loginForm');
-    const loginMessage  = document.getElementById('loginMessage');
+        const loginSection = document.getElementById('login-section');
+        const resultsContent = document.getElementById('results-content');
+        const loginForm = document.getElementById('loginForm');
+        const loginMessage = document.getElementById('loginMessage');
 
-    const resetVotesButton   = document.getElementById('resetVotesButton');
-    const logoutButton       = document.getElementById('logoutButton');
-    const logoutButtonNav    = document.getElementById('logoutButtonNav');
-    const logoutButtonMobile = document.getElementById('logoutButtonMobile');
+        const resetVotesButton = document.getElementById('resetVotesButton');
+        const logoutButton = document.getElementById('logoutButton'); // Main logout button
+        const logoutButtonNav = document.getElementById('logoutButtonNav'); // Nav logout button
+        const logoutButtonMobile = document.getElementById('logoutButtonMobile'); // Mobile nav logout button
 
-    /* ---- Configuración básica ---- */
-    const CORRECT_USERNAME = 'uriel';
-    const CORRECT_PASSWORD = '123';
-    const RESET_PASSWORD   = 'vargas';
+        const CORRECT_USERNAME = "uriel";
+        const CORRECT_PASSWORD = "123";
+        const RESET_PASSWORD = "vargas"; // Password for resetting data
 
-    let allVotes = [];
+        let allVotes = []; // Variable para almacenar todos los votos cargados
 
-    /* ---- Menú móvil ---- */
-    mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('active'));
-    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('active')));
-    window.addEventListener('resize', () => { if (window.innerWidth >= 768) mobileMenu.classList.remove('active'); });
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('active');
+        }
 
-    /* ---- Btn volver arriba ---- */
-    window.addEventListener('scroll', () => {
-      backToTopBtn.classList.toggle('show', window.scrollY > 300);
-    });
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
 
-    /* ---- Login ---- */
-    loginForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const u = document.getElementById('username').value.trim();
-      const p = document.getElementById('password').value.trim();
-      if (u === CORRECT_USERNAME && p === CORRECT_PASSWORD) {
-        localStorage.setItem('loggedIn','true');
-        iniciarSesion();
-      } else loginMessage.textContent = 'Usuario o contraseña incorrectos.';
-    });
-
-    function iniciarSesion(){
-      loginSection.classList.add('hidden');
-      resultsContent.classList.remove('hidden');
-      logoutButtonNav.classList.remove('hidden');
-      logoutButtonMobile.classList.remove('hidden');
-      cargarTodo();
-    }
-
-    /* ---- Cargar datos y estadísticas ---- */
-    function cargarTodo(){
-      cargarVotos();
-      actualizarClasificacion();
-      actualizarEstadisticas();
-    }
-
-    function cargarVotos(){
-      allVotes = JSON.parse(localStorage.getItem('soapVotes')||'[]');
-      votesTableBody.innerHTML = '';
-      if(!allVotes.length){
-        votesTableBody.innerHTML = `<tr><td colspan="5" class="text-center text-gray-500 py-4">Aún no hay votos registrados.</td></tr>`;
-        deshabilitarSorteo(true,'No hay votos para sortear');
-      }else{
-        allVotes.forEach((v,i)=>{
-          const row = votesTableBody.insertRow();
-          row.innerHTML = `
-            <td>${i+1}</td><td>${v.voterName}</td><td>${v.voterLastName}</td>
-            <td>${v.soap}</td><td>${new Date(v.timestamp).toLocaleString('es-AR')}</td>`;
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                }
+            });
         });
-        deshabilitarSorteo(false,'Realizar Sorteo');
-      }
-      totalVotesSpan.textContent = allVotes.length;
-    }
 
-    function deshabilitarSorteo(state,text){
-      drawButton.disabled = state;
-      drawButton.textContent = text;
-      drawButton.classList.toggle('bg-gray-400',state);
-      drawButton.classList.toggle('cursor-not-allowed',state);
-      drawButton.classList.toggle('bg-blue-600',!state);
-      drawButton.classList.toggle('hover:bg-blue-700',!state);
-    }
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                if (mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                }
+            }
+        });
 
-    /* ---- Sorteo ---- */
-    drawButton.addEventListener('click', ()=>{
-      if(!allVotes.length) return;
-      const ganador = allVotes[Math.floor(Math.random()*allVotes.length)];
-      winnerList.innerHTML = `<li>${ganador.voterName} ${ganador.voterLastName} (votó: ${ganador.soap})</li>`;
-      drawResultsDiv.classList.remove('hidden');
-      deshabilitarSorteo(true,'Sorteo Realizado');
-      resetDrawButton.classList.remove('hidden');
-    });
-    resetDrawButton.addEventListener('click',()=>{
-      drawResultsDiv.classList.add('hidden');
-      winnerList.innerHTML='';
-      deshabilitarSorteo(!allVotes.length,'Realizar Sorteo');
-      resetDrawButton.classList.add('hidden');
-    });
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
 
-    /* ---- Clasificación votos ---- */
-    function actualizarClasificacion(){
-      const counts = {};
-      allVotes.forEach(v=>counts[v.soap] = (counts[v.soap]||0)+1);
-      soapClassificationDiv.innerHTML = Object.keys(counts).length
-        ? Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,c])=>`
-            <div class="bg-gray-100 p-3 rounded-md flex justify-between">
-              <span>${k}</span><span class="font-bold text-green-700">${c} votos</span>
-            </div>`).join('')
-        : '<p class="text-gray-500">No hay votos para clasificar aún.</p>';
-    }
+        // --- Lógica de Login ---
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
 
-    /* ---- Estadísticas ---- */
-    function actualizarEstadisticas(){
-      const unicos = new Set(allVotes.map(v=>`${v.voterName} ${v.voterLastName}`));
-      uniqueVotersSpan.textContent = unicos.size;
-      pageVisitsCountSpan.textContent = parseInt(localStorage.getItem('indexPageVisits')||0);
-    }
+            if (usernameInput === CORRECT_USERNAME && passwordInput === CORRECT_PASSWORD) {
+                loginSection.classList.add('hidden'); // Oculta la sección de login
+                resultsContent.classList.remove('hidden'); // Muestra la sección de resultados
+                logoutButtonNav.classList.remove('hidden'); // Muestra botón de logout en nav
+                logoutButtonMobile.classList.remove('hidden'); // Muestra botón de logout en nav móvil
+                loadAllStatsAndResults(); // Carga todos los resultados y estadísticas
+                localStorage.setItem('loggedIn', 'true'); // Marca que el usuario está logeado (sesión básica)
+            } else {
+                loginMessage.textContent = "Usuario o contraseña incorrectos.";
+            }
+        });
 
-    /* ---- Restablecer votos ---- */
-    resetVotesButton.addEventListener('click',()=>{
-      const pass = prompt('Ingrese la contraseña para restablecer:');
-      if(pass===RESET_PASSWORD && confirm('¿Restablecer TODO?')){
-        localStorage.removeItem('soapVotes');
-        localStorage.removeItem('indexPageVisits');
-        alert('Restablecido.');
-        location.reload();
-      } else if(pass!==null) alert('Contraseña incorrecta.');
-    });
+        // --- Lógica para cargar todos los resultados y estadísticas ---
+        function loadAllStatsAndResults() {
+            loadVotesResults(); // Carga la tabla de votos y el total de votos
+            updateSoapClassification(); // Actualiza la clasificación de jabones
+            updateGeneralStatistics(); // Actualiza las estadísticas generales (personas únicas, visitas)
+        }
 
-    /* ---- Logout ---- */
-    [logoutButton,logoutButtonNav,logoutButtonMobile].forEach(btn=>btn.addEventListener('click',()=>{
-      localStorage.removeItem('loggedIn');location.reload();
-    }));
+        // --- Lógica para cargar los resultados de votación ---
+        function loadVotesResults() {
+            console.log('Intentando cargar votos desde localStorage...'); // Depuración
+            allVotes = JSON.parse(localStorage.getItem('soapVotes')) || []; // Almacena los votos en allVotes
+            console.log('Votos cargados:', allVotes); // Depuración
+            votesTableBody.innerHTML = ''; // Limpia la tabla actual
 
-    /* ---- Mantener sesión si recargo ---- */
-    document.addEventListener('DOMContentLoaded',()=>{
-      if(localStorage.getItem('loggedIn')==='true') iniciarSesion();
-    });
+            if (allVotes.length === 0) {
+                const row = votesTableBody.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 5; // Cubre todas las columnas
+                cell.textContent = 'Aún no hay votos registrados.';
+                cell.className = 'text-center text-gray-500 py-4';
+                drawButton.disabled = true; // Deshabilita el botón de sorteo si no hay votos
+                drawButton.textContent = 'No hay votos para sortear';
+                drawButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                drawButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+            } else {
+                allVotes.forEach((vote, index) => {
+                    const row = votesTableBody.insertRow();
+                    row.insertCell().textContent = index + 1; // Nº Persona (ID de voto simple)
+                    row.insertCell().textContent = vote.voterName;
+                    row.insertCell().textContent = vote.voterLastName;
+                    row.insertCell().textContent = vote.soap;
+                    row.insertCell().textContent = new Date(vote.timestamp).toLocaleString('es-AR');
+                });
+                drawButton.disabled = false; // Habilita el botón de sorteo
+                drawButton.textContent = 'Realizar Sorteo';
+                drawButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                drawButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }
+            totalVotesSpan.textContent = allVotes.length;
+        }
 
-    /* ---- Escuchar storage (multi-pestaña) ---- */
-    window.addEventListener('storage',e=>{
-      if(['soapVotes','indexPageVisits','loggedIn'].includes(e.key)){
-        if(localStorage.getItem('loggedIn')==='true') {cargarTodo(); resetDrawButton.click();}
-        else location.reload();
-      }
-    });
-  </script>
+        // --- Lógica para el sorteo ---
+        function selectRandomWinner() {
+            if (allVotes.length === 0) {
+                winnerList.innerHTML = '<li>No hay participantes para el sorteo.</li>';
+                return;
+            }
 
-  <!-- FOOTER -->
-  <footer class="bg-green-800 text-white py-8 text-center mt-16">
-    <p>&copy; 2025 Jabones Artesanales. Todos los derechos reservados.</p>
-    <p class="mt-2">Hecho por alumnos 3°1 – cens452.</p>
-  </footer>
+            const shuffledVotes = [...allVotes];
+            for (let i = shuffledVotes.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledVotes[i], shuffledVotes[j]] = [shuffledVotes[j], shuffledVotes[i]];
+            }
+
+            const numberOfWinners = 1; // Puedes cambiar esto para seleccionar más ganadores
+            const winners = shuffledVotes.slice(0, numberOfWinners);
+
+            winnerList.innerHTML = ''; // Limpiar ganadores anteriores
+            if (winners.length > 0) {
+                winners.forEach(winner => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${winner.voterName} ${winner.voterLastName} (votó por: ${winner.soap})`;
+                    winnerList.appendChild(listItem);
+                });
+            } else {
+                winnerList.innerHTML = '<li>No se pudo seleccionar un ganador.</li>';
+            }
+
+            drawResultsDiv.classList.remove('hidden');
+            drawButton.disabled = true;
+            drawButton.textContent = 'Sorteo Realizado';
+            drawButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+            drawButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+            resetDrawButton.classList.remove('hidden');
+        }
+
+        function resetDraw() {
+            drawResultsDiv.classList.add('hidden');
+            winnerList.innerHTML = '';
+            drawButton.disabled = false;
+            drawButton.textContent = 'Realizar Sorteo';
+            drawButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+            drawButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            resetDrawButton.classList.add('hidden');
+        }
+
+        drawButton.addEventListener('click', selectRandomWinner);
+        resetDrawButton.addEventListener('click', resetDraw);
+
+        // --- Lógica para la clasificación de votos por jabón ---
+        function updateSoapClassification() {
+            const soapCounts = {};
+            allVotes.forEach(vote => {
+                soapCounts[vote.soap] = (soapCounts[vote.soap] || 0) + 1;
+            });
+
+            soapClassificationDiv.innerHTML = ''; // Limpiar clasificación anterior
+
+            const sortedSoaps = Object.entries(soapCounts).sort(([,countA], [,countB]) => countB - countA);
+
+            if (sortedSoaps.length === 0) {
+                soapClassificationDiv.textContent = 'No hay votos para clasificar aún.';
+                soapClassificationDiv.classList.add('text-gray-500');
+            } else {
+                sortedSoaps.forEach(([soapName, count]) => {
+                    const item = document.createElement('div');
+                    item.className = 'bg-gray-100 p-3 rounded-md flex justify-between items-center';
+                    item.innerHTML = `<span>${soapName}:</span> <span class="font-bold text-green-700">${count} votos</span>`;
+                    soapClassificationDiv.appendChild(item);
+                });
+            }
+        }
+
+        // --- Lógica para estadísticas generales (personas únicas y visitas a index.html) ---
+        function updateGeneralStatistics() {
+            // Contar personas únicas (basado en nombre y apellido, una limitación en cliente-side)
+            const uniqueVotersSet = new Set();
+            allVotes.forEach(vote => {
+                uniqueVotersSet.add(`${vote.voterName} ${vote.voterLastName}`);
+            });
+            uniqueVotersSpan.textContent = uniqueVotersSet.size;
+
+            // Obtener visitas a index.html
+            const indexPageVisits = parseInt(localStorage.getItem('indexPageVisits')) || 0;
+            pageVisitsCountSpan.textContent = indexPageVisits;
+        }
+
+        // --- Lógica para Restablecer Votaciones ---
+        resetVotesButton.addEventListener('click', () => {
+            const password = prompt("Ingrese la contraseña para restablecer las votaciones:");
+            if (password === RESET_PASSWORD) {
+                if (confirm("¿Está seguro de que desea restablecer TODAS las votaciones y visitas? Esta acción es irreversible.")) {
+                    localStorage.removeItem('soapVotes');
+                    localStorage.removeItem('indexPageVisits');
+                    alert("Votaciones y visitas restablecidas exitosamente.");
+                    location.reload(); // Recarga la página para mostrar los cambios
+                }
+            } else if (password !== null) { // If user clicked cancel, password will be null
+                alert("Contraseña incorrecta. No se restablecieron las votaciones.");
+            }
+        });
+
+        // --- Lógica para Cerrar Sesión ---
+        function logout() {
+            localStorage.removeItem('loggedIn'); // Elimina la marca de sesión
+            location.reload(); // Recarga la página para volver al login
+        }
+
+        logoutButton.addEventListener('click', logout);
+        logoutButtonNav.addEventListener('click', logout);
+        logoutButtonMobile.addEventListener('click', logout);
+
+
+        // Al cargar la página: Comprobar si el usuario ya está "logueado" (para mantener la sesión básica)
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('loggedIn') === 'true') {
+                loginSection.classList.add('hidden');
+                resultsContent.classList.remove('hidden');
+                logoutButtonNav.classList.remove('hidden');
+                logoutButtonMobile.classList.remove('hidden');
+                loadAllStatsAndResults(); // Carga todo
+            } else {
+                loginSection.classList.remove('hidden');
+                resultsContent.classList.add('hidden');
+                logoutButtonNav.classList.add('hidden');
+                logoutButtonMobile.classList.add('hidden');
+            }
+        });
+        
+        // Escuchar eventos de storage (útil para múltiples pestañas)
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'soapVotes' || event.key === 'indexPageVisits' || event.key === 'loggedIn') {
+                if (localStorage.getItem('loggedIn') === 'true') { // Solo actualiza si está logeado
+                    console.log('localStorage cambió, recargando resultados y estadísticas.');
+                    loadAllStatsAndResults();
+                    resetDraw(); // Reinicia el sorteo si los datos cambian
+                } else {
+                    // If loggedIn state changes to false, force logout
+                    location.reload();
+                }
+            }
+        });
+    </script>
 </body>
 </html>
