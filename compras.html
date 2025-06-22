@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alquimia Natural - Verde Suave</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for a soft green theme and mobile menu transitions */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; /* Light gray background */
+            min-height: 100vh; /* Ajustado para la página de compras */
+            scroll-behavior: smooth; /* Smooth scrolling for internal links */
+        }
+        .font-decorative {
+            font-family: 'Dancing Script', cursive;
+        }
+        h1 {
+            text-align: center;
+        }
+        .compra {
+            margin: 30px auto; /* Centrar el contenedor de la compra */
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centrar los elementos internos del contenedor compra */
+            max-width: 700px; /* Limitar el ancho para mejor lectura */
+        }
+        .tienda {
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 700px; /* Limitar el ancho para mejor lectura */
+        }
+
+        /* ************************************************************* */
+        /* Mejoras en la lista de compra y botones */
+        .producto {
+            display: flex;
+            justify-content: space-between; /* Empuja el botón a la derecha */
+            align-items: center; /* Alinea verticalmente los items al centro */
+            background-color: #f8fafc; /* Fondo ligeramente diferente para cada producto */
+            margin: 10px 0; /* Margen vertical para separar productos */
+            padding: 15px 20px; /* Más padding para que se vea más espacioso */
+            border-radius: 8px;
+            width: 100%; /* Ocupa todo el ancho del contenedor 'compra' */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra más suave */
+            transition: transform 0.2s ease-in-out; /* Animación al pasar el ratón */
+        }
+        .producto:hover {
+            transform: translateY(-3px); /* Efecto de "levantar" al pasar el ratón */
+        }
+        .producto span {
+            font-size: 1.125rem; /* text-lg para el texto del producto */
+            color: #374151; /* Color de texto más oscuro */
+            font-weight: 500; /* Medium font weight */
+            margin-right: 20px; /* Espacio entre el texto y el botón */
+            flex-grow: 1; /* Permite que el texto ocupe el espacio disponible */
+        }
+
+        .buy-button { /* Clase específica para los botones "Comprar" */
+            padding: 10px 18px; /* Tamaño de botón más adecuado */
+            background-color: #10B981; /* Verde suave */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600; /* Semibold */
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            white-space: nowrap; /* Evita que el texto del botón se rompa */
+        }
+        .buy-button:hover {
+            background-color: #059669; /* Verde más oscuro al pasar el ratón */
+            transform: translateY(-1px); /* Ligero efecto de levantamiento */
+        }
+        /* ************************************************************* */
+
+        /* Estilos para los botones de Finalizar y Descargar */
+        #finalizar, #descargarPDF {
+            display: none; /* Se controlan con JS */
+            margin-top: 20px; /* Espacio superior */
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #finalizar {
+            background-color: #2563EB; /* Azul vibrante */
+            color: white;
+            border: none;
+            display: block; /* Muestra el botón de finalizar por defecto */
+        }
+        #finalizar:hover {
+            background-color: #1D4ED8;
+        }
+        #descargarPDF {
+            background-color: #DC2626; /* Rojo para descargar */
+            color: white;
+            border: none;
+            margin-top: 15px; /* Más espacio entre finalizar y descargar */
+        }
+        #descargarPDF:hover {
+            background-color: #B91C1C;
+        }
+
+
+        .factura {
+            display: none;
+            background-color: #fff;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .info-empresa {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .info-factura {
+            font-size: 14px;
+            margin-top: 10px;
+            margin-bottom: 20px; /* Añadido espacio inferior */
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .th, td {
+            border: 1px solid #ddd;
+            padding: 10px; /* Más padding para celdas */
+            text-align: left; /* Alinea el texto a la izquierda en las celdas */
+        }
+        .th {
+            background-color: #f1f1f1;
+            font-weight: bold;
+        }
+        .total {
+            text-align: right;
+            font-weight: bold;
+            padding-top: 15px; /* Más padding para el total */
+        }
+        #logo {
+            max-height: 60px;
+        }
+
+        .soft-green-bg {
+            background-color: #D1FAE5; /* A very light, soft green */
+        }
+        .soft-green-text {
+            color: #01130d; /* A medium green for text */
+        }
+        
+        .dark-green-bg {
+            background-image: url('imagen/Jabon-de-lavanda-768x432.jpg'); /* Replace with the actual URL of your image */
+            background-size: cover; /* Scale the image to cover the entire background */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            background-position: center center; /* Center the image within the element */
+        }
+        .dark-green-text {
+            color: #065F46;
+        }
+
+        /* Mobile menu transition */
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .mobile-menu.active {
+            background-color: #7FFFD450;
+            max-height: 500px; /* Adjust as needed for content */
+            transition: max-height 0.3s ease-in;
+        }
+
+        /* Fixed button visibility */
+        .fixed-button {
+            display: none; /* Hidden by default */
+        }
+        .fixed-button.show {
+            display: block; /* Shown when scrolled */
+        }
+
+        /* Step card styling (for other pages, not directly used in this shopping page) */
+        .step-card {
+            @apply bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center;
+        }
+        .step-image {
+            @apply rounded-lg mb-4 w-full h-auto max-w-md;
+        }
+        .contenedor-logo { /* Renombrado para evitar conflicto con 'logo' ID */
+            @apply rounded-lg mb-4 w-full h-auto max-w-md;
+        }
+
+        /* --- Animación para el logo principal --- */
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-logo-entry {
+            animation: fadeInSlideUp 1.2s ease-out forwards;
+            opacity: 0; /* Asegura que el logo esté oculto antes de la animación */
+        }
+
+        /* Custom styles for comments section */
+        .comments-section {
+            background-color: #f0fdf4; /* Very light green background for the section */
+            padding: 3rem 0;
+        }
+        .comment-card {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .comment-card p {
+            margin: 0;
+            line-height: 1.5;
+            color: #374151; /* Dark gray for text */
+        }
+        .comment-meta {
+            font-size: 0.875rem; /* text-sm */
+            color: #6B7280; /* Gray for meta info */
+            margin-bottom: 0.5rem;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* Styles for the comment form and admin button */
+        .comment-form-container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+        .comment-form-container input[type="text"],
+        .comment-form-container textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db; /* Light gray border */
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            resize: vertical; /* Allow vertical resizing */
+        }
+        .comment-form-container button[type="submit"] {
+            background-color: #10B981; /* Soft green */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        .comment-form-container button[type="submit"]:hover {
+            background-color: #059669; /* Darker soft green on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="dark-green-bg p-4 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#top" class="text-black-200 text-4xl font-bold flex items-center soft-green-text">
+                <img src="imagen/logo4.png"
+                    alt="Logo Alquimia Natural"
+                    class="h-24 w-auto mr-7 rounded-full"><span class="font-decorative underline">Alquimia Natural</span>
+            </a>
+
+            <button id="mobileMenuButton" class="text-gren md:hidden focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+
+            <div class="hidden md:flex space-x-6">
+                <a href="inicio.html" class="text-white hover:text-green-200 transition duration-300">Inicio</a>
+                <a href="gracias.html" class="text-white hover:text-green-200 transition duration-300">Gracias</a>
+                <a href="results.html" class="text-white hover:text-green-200 transition duration-300">Resultados</a>
+                <a href="tarjeta.html" class="text-white hover:text-green-200 transition duration-300">Tarjeta</a>
+                <a href="compras.html" class="text-white hover:text-green-200 transition duration-300">Comprar</a>
+                <a href="votaciones.html" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition duration-300 ease-in-out">Votar</a>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="mobile-menu md:hidden mt-4">
+            <a href="inicio.html" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Inicio</a>
+            <a href="gracias.html" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Gracias</a>
+            <a href="tarjeta.html" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Tarjeta</a>
+            <a href="results.html" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300">Resultado</a>
+            <a href="compras.html" class="block text-black-500 py-2 px-4 hover:bg-green-700 rounded-md transition duration-300" >compra</a>
+            <a href="votaciones.html" class="block bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition duration-300 ease-in-out mt-2 text-center">Votar</a>
+        </div>
+    </nav>
+
+    <div class="tienda"><p class="text-2xl font-semibold text-green-800">Tienda de Jabones Naturales</p></div>
+
+    <div class="compra">
+        <!-- Productos -->
+        <div class="producto">
+            <span>Jabón de Lavanda - $3.00</span>
+            <button onclick="comprar('Jabón de Lavanda', 3.00)" class="buy-button">Comprar</button>
+        </div>
+        <div class="producto">
+            <span>Jabón de Aloe Vera - $3.50</span>
+            <button onclick="comprar('Jabón de Aloe Vera', 3.50)" class="buy-button">Comprar</button>
+        </div>
+        <div class="producto">
+            <span>Jabón de Miel - $4.00</span>
+            <button onclick="comprar('Jabón de Miel', 4.00)" class="buy-button">Comprar</button>
+        </div>
+        <div class="producto">
+            <span>Jabón de Coco - $4.50</span>
+            <button onclick="comprar('Jabón de Coco', 4.50)" class="buy-button">Comprar</button>
+        </div>
+        <div class="producto">
+            <span>Jabón de Piedra - $10.00</span>
+            <button onclick="comprar('Jabón de Piedra', 10.00)" class="buy-button">Comprar</button>
+        </div>
+
+        <!-- Botones de Acción -->
+        <button id="finalizar" onclick="mostrarFactura()">Finalizar Compra</button>
+        <button id="descargarPDF" onclick="generarPDF()">Descargar PDF</button>
+
+        <!-- Factura -->
+        <div class="factura" id="factura">
+            <div id="contenidoFactura">
+                <div class="info-empresa">
+                    <img src="imagen/logo4.png" id="logo" alt="Logo">
+                    <div>
+                        <strong class="font-decorative underline">Alquimia Natural</strong><br>
+                        contacto@jabones.com<br>
+                        Tel: +54 9 123 456 789
+                    </div>
+                </div>
+
+                <div class="info-factura">
+                    <p><strong>Fecha:</strong> <span id="fechaFactura"></span></p>
+                    <p><strong>Número de Factura:</strong> <span id="numeroFactura"></span></p>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="th">Producto</th>
+                            <th class="th">Precio</th>
+                            <th class="th">Cantidad</th>
+                            <th class="th">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detalleFactura"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="total">Total:</td>
+                            <td id="totalFactura">$0.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <section id="comentarios" class="comments-section">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-green-800">Deja tus Comentarios</h2>
+
+            <div class="comment-form-container max-w-2xl mx-auto">
+                <form id="commentForm">
+                    <div class="mb-4">
+                        <label for="commentName" class="block text-gray-700 text-sm font-bold mb-2">Nombre:</label>
+                        <input type="text" id="commentName" name="commentName" placeholder="Tu nombre" 
+                                class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                    <div class="mb-4">
+                        <label for="commentLastName" class="block text-gray-700 text-sm font-bold mb-2">Apellido:</label>
+                        <input type="text" id="commentLastName" name="commentLastName" placeholder="Tu apellido" 
+                                class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                    <label for="commentText" class="block text-gray-700 text-sm font-bold mb-2">Tu comentario:</label>
+                    <textarea id="commentText" name="commentText" rows="4" placeholder="Escribe tu comentario aquí..." 
+                                  class="focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                    <button type="submit" class="bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 transition duration-300 ease-in-out">Publicar Comentario</button>
+                </form>
+
+                <button id="adminModeToggle" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-600 transition duration-300 ease-in-out mt-4">
+                    Activar Modo Admin
+                </button>
+            </div>
+
+            <h3 class="text-2xl font-bold text-center mt-12 mb-6 text-green-800">Comentarios:</h3>
+            <div id="commentsContainer" class="max-w-3xl mx-auto">
+                <p class="text-center text-gray-500" id="noCommentsMessage">Sé el primero en comentar.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-green-800 text-white py-8 text-center">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2025 Jabones Artesanales. Todos los derechos reservados.</p>
+            <p class="mt-2">Hecho por alumnos 3°1 - cens452 .</p>
+        </div>
+    </footer>
+
+    <a href="#top" id="backToTopBtn" class="fixed-button fixed bottom-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-full shadow-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300 ease-in-out text-base md:text-lg px-5 py-2.5 md:px-6 md:py-3">
+        Volver Arriba
+    </a>
+
+    <script>
+        // Get references to the mobile menu button and the mobile menu container
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const backToTopBtn = document.getElementById('backToTopBtn');
+
+        // Function to toggle the mobile menu visibility
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Add click event listener to the mobile menu button
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+
+        // Close the mobile menu if a link is clicked (for better UX)
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                }
+            });
+        });
+
+        // Optional: Close the mobile menu if the window is resized to desktop size
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) { // Tailwind's 'md' breakpoint
+                if (mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                }
+            }
+        });
+
+        // Show/hide "Volver Arriba" button based on scroll position
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) { // Show after scrolling 300px
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+        
+        // --- Contador de visitas para index.html ---
+        document.addEventListener('DOMContentLoaded', () => {
+            let visits = parseInt(localStorage.getItem('indexPageVisits')) || 0;
+            visits++;
+            localStorage.setItem('indexPageVisits', visits);
+            console.log(`index.html visits: ${visits}`); // For debugging
+        });
+
+        // --- Lógica de Compras ---
+        let carrito = [];
+        let contadorFactura = parseInt(localStorage.getItem('contadorFactura')) || 1;
+
+        function comprar(nombre, precio) {
+            const producto = carrito.find(p => p.nombre === nombre);
+            if (producto) {
+                producto.cantidad += 1;
+                producto.subtotal = producto.cantidad * producto.precio;
+            } else {
+                carrito.push({ nombre, precio, cantidad: 1, subtotal: precio });
+            }
+
+            mostrarNotificacion(`${nombre} agregado al carrito.`);
+            document.getElementById('finalizar').style.display = 'block'; // Asegura que el botón "Finalizar Compra" sea visible
+        }
+
+        function mostrarFactura() {
+            const tabla = document.getElementById('detalleFactura');
+            tabla.innerHTML = '';
+            let total = 0;
+
+            if (carrito.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Carrito Vacío',
+                    text: 'No tienes productos en el carrito para finalizar la compra.',
+                    toast: true,
+                    position: 'center',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: '#FFC107',
+                    color: '#000',
+                });
+                document.getElementById('factura').style.display = 'none';
+                document.getElementById('descargarPDF').style.display = 'none';
+                return; // Salir de la función si el carrito está vacío
+            }
+
+            carrito.forEach(p => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${p.nombre}</td>
+                    <td>$${p.precio.toFixed(2)}</td>
+                    <td>${p.cantidad}</td>
+                    <td>$${p.subtotal.toFixed(2)}</td>
+                `;
+                tabla.appendChild(fila);
+                total += p.subtotal;
+            });
+
+            document.getElementById('totalFactura').textContent = `$${total.toFixed(2)}`;
+            document.getElementById('factura').style.display = 'block';
+            document.getElementById('descargarPDF').style.display = 'block';
+
+            const hoy = new Date();
+            document.getElementById('fechaFactura').textContent = hoy.toLocaleDateString();
+
+            const numero = 'FAC-' + contadorFactura.toString().padStart(6, '0');
+            document.getElementById('numeroFactura').textContent = numero;
+            contadorFactura++;
+            localStorage.setItem('contadorFactura', contadorFactura);
+        }
+
+        function generarPDF() {
+            const element = document.getElementById('contenidoFactura');
+
+            // Mostrar una notificación de que el PDF se está generando
+            Swal.fire({
+                title: 'Generando PDF...',
+                text: 'Por favor espera, tu factura se está preparando.',
+                icon: 'info',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            const opt = {
+                margin: 10,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).outputPdf('blob').then(function(pdfBlob) {
+                Swal.close(); // Cerrar la notificación de carga
+
+                const blobUrl = URL.createObjectURL(pdfBlob);
+                
+                // Opción 1: Descargar el PDF directamente (más fiable para la mayoría de los casos)
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = `factura_${document.getElementById('numeroFactura').textContent}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobUrl);
+
+                // Notificar al usuario que la descarga ha comenzado
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Descarga Iniciada!',
+                    text: 'Tu factura PDF se ha descargado.',
+                    toast: true,
+                    position: 'center', // O 'center' si prefieres
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: '#10B981',
+                    color: '#fff',
+                });
+
+            }).catch(error => {
+                Swal.close(); // Cerrar la notificación de carga en caso de error
+                console.error("Error al generar el PDF:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al generar PDF',
+                    text: 'No se pudo generar la factura. Inténtalo de nuevo más tarde.',
+                    background: '#DC2626',
+                    color: '#fff',
+                });
+            });
+        }
+
+        function mostrarNotificacion(mensaje) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Producto agregado',
+                text: mensaje,
+                toast: true,
+                position: 'center',
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true,
+                background: '#28a745',
+                color: '#fff',
+            });
+        }
+
+        // --- Lógica de Comentarios (Persistencia local sin Backend) ---
+        const commentsContainer = document.getElementById('commentsContainer');
+        const commentForm = document.getElementById('commentForm');
+        const commentNameInput = document.getElementById('commentName');
+        const commentLastNameInput = document.getElementById('commentLastName');
+        const commentTextarea = document.getElementById('commentText');
+        const noCommentsMessage = document.getElementById('noCommentsMessage');
+        const adminModeToggle = document.getElementById('adminModeToggle');
+
+        // --- CREDENCIALES DE ADMINISTRADOR (NO SEGURAS EN EL CLIENTE) ---
+        const ADMIN_USERNAME = "u";
+        const ADMIN_PASSWORD = "y"; 
+
+        let isAdminMode = localStorage.getItem('isAdminMode') === 'true'; 
+        adminModeToggle.textContent = isAdminMode ? 'Desactivar Modo Admin' : 'Activar Modo Admin';
+
+        function loadComments() {
+            let comments = JSON.parse(localStorage.getItem('pageComments')) || [];
+            
+            comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            commentsContainer.innerHTML = ''; 
+
+            if (comments.length === 0) {
+                commentsContainer.appendChild(noCommentsMessage);
+                noCommentsMessage.style.display = 'block';
+            } else {
+                noCommentsMessage.style.display = 'none';
+                comments.forEach((comment, index) => {
+                    const commentElement = document.createElement('div');
+                    commentElement.classList.add('comment-card');
+
+                    const date = new Date(comment.timestamp);
+                    const options = { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric', 
+                        hour: '2-digit', 
+                        minute: '2-digit', 
+                        second: '2-digit',
+                        hour12: false
+                    };
+                    const formattedDate = date.toLocaleDateString('es-ES', options);
+
+                    commentElement.innerHTML = `
+                        <div class="comment-meta">
+                            <strong>${comment.name || 'Anónimo'} ${comment.lastName || ''}</strong>
+                            <span>${formattedDate}</span>
+                        </div>
+                        <p>${comment.text}</p>
+                    `; 
+                    
+                    if (isAdminMode) {
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Eliminar';
+                        deleteButton.classList.add('bg-red-500', 'text-white', 'px-3', 'py-1', 'rounded-md', 'hover:bg-red-600', 'mt-2', 'self-end');
+                        deleteButton.onclick = () => deleteComment(index);
+                        commentElement.appendChild(deleteButton);
+                    }
+
+                    commentsContainer.appendChild(commentElement);
+                });
+            }
+        }
+
+        function deleteComment(indexToDelete) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: '¡No podrás revertir esto!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let comments = JSON.parse(localStorage.getItem('pageComments')) || [];
+                    comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    comments.splice(indexToDelete, 1); 
+                    localStorage.setItem('pageComments', JSON.stringify(comments));
+                    loadComments();
+                    Swal.fire('¡Eliminado!', 'El comentario ha sido eliminado.', 'success');
+                }
+            });
+        }
+
+        function promptForAdminCredentials() {
+            Swal.fire({
+                title: 'Modo Administrador',
+                html:
+                    '<input id="swal-input1" class="swal2-input" placeholder="Usuario">' +
+                    '<input id="swal-input2" class="swal2-input" type="password" placeholder="Contraseña">',
+                focusConfirm: false,
+                preConfirm: () => {
+                    const username = Swal.getPopup().querySelector('#swal-input1').value;
+                    const password = Swal.getPopup().querySelector('#swal-input2').value;
+                    if (!username || !password) {
+                        Swal.showValidationMessage('Por favor, ingresa usuario y contraseña');
+                    }
+                    return { username: username, password: password };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (result.value.username === ADMIN_USERNAME && result.value.password === ADMIN_PASSWORD) {
+                        isAdminMode = !isAdminMode;
+                        localStorage.setItem('isAdminMode', isAdminMode);
+                        adminModeToggle.textContent = isAdminMode ? 'Desactivar Modo Admin' : 'Activar Modo Admin';
+                        loadComments();
+                        Swal.fire('Éxito', isAdminMode ? 'Modo Administrador activado.' : 'Modo Administrador desactivado.', 'success');
+                    } else {
+                        Swal.fire('Error', 'Usuario o contraseña incorrectos.', 'error');
+                    }
+                }
+            });
+        }
+
+        adminModeToggle.addEventListener('click', promptForAdminCredentials);
+
+        commentForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const commentName = commentNameInput.value.trim();
+            const commentLastName = commentLastNameInput.value.trim();
+            const commentText = commentTextarea.value.trim();
+
+            if (!commentText) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: 'Por favor, escribe un comentario antes de publicar.',
+                    toast: true,
+                    position: 'center',
+                    showConfirmButton: false,
+                    timer: 2500,
+                    timerProgressBar: true,
+                    background: '#DC2626',
+                    color: '#fff',
+                });
+                return;
+            }
+
+            let comments = JSON.parse(localStorage.getItem('pageComments')) || [];
+            
+            comments.push({ 
+                name: commentName, 
+                lastName: commentLastName, 
+                text: commentText,
+                timestamp: new Date().toISOString()
+            });
+
+            localStorage.setItem('pageComments', JSON.stringify(comments));
+
+            commentNameInput.value = '';
+            commentLastNameInput.value = '';
+            commentTextarea.value = '';
+            
+            loadComments();
+            Swal.fire({
+                icon: 'success',
+                title: 'Comentario Publicado',
+                text: 'Tu comentario ha sido añadido.',
+                toast: true,
+                position: 'center',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                background: '#10B981',
+                color: '#fff',
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', loadComments);
+    </script>
+
+</body>
+</html>
