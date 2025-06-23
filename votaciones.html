@@ -171,44 +171,6 @@
     </section>
 
     ---
- <section id="vote-section" class="py-16 md:py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-green-800">Vota por tu Jabón Favorito</h2>
-            <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg">
-                <form id="voteForm">
-                    <div class="mb-4">
-                        <label for="voterName" class="block text-gray-700 text-sm font-bold mb-2">Nombre:</label>
-                        <input type="text" id="voterName" name="voterName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="voterLastName" class="block text-gray-700 text-sm font-bold mb-2">Apellido:</label>
-                        <input type="text" id="voterLastName" name="voterLastName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-                    </div>
-                    <div class="mb-6">
-                        <label for="soapSelect" class="block text-gray-700 text-sm font-bold mb-2">Selecciona tu Jabón:</label>
-                        <select id="soapSelect" name="soap" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" required>
-                            <option value="">-- Por favor, elige una opción --</option>
-                            <option value="Jabon de Lavanda">Jabón de Lavanda</option>
-                            <option value="Jabon de Avena y Miel">Jabón de Avena y Miel</option>
-                            <option value="Jabon de Caléndula">Jabón de Caléndula</option>
-                            <option value="Jabon de Carbon Activado">Jabón de Carbón Activado</option>
-                            <option value="Jabon de Romero y Menta">Jabón de Romero y Menta</option>
-                            <option value="Jabon de Coco y Vainilla">Jabón de Coco y Vainilla</option>
-                            <option value="Jabon de Arbol de Te y Eucalipto">Jabón de Árbol de Té y Eucalipto</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                            Enviar Voto
-                        </button>
-                    </div>
-                </form>
-                <div id="message" class="mt-4 text-center text-sm font-semibold"></div>
-            </div>
-        </div>
-    </section>
-
-    ---
 
     <footer class="bg-green-800 text-white py-8 text-center">
         <div class="container mx-auto px-4">
@@ -221,7 +183,13 @@
         Volver Arriba
     </a>
 
-    <script>
+    <script type="module">
+        // Importa la función addDoc si no la has hecho globalmente a través de window.db y window.votesCollection
+        // Si usas window.db y window.votesCollection como hice arriba, no necesitas re-importar aquí.
+        // Pero es buena práctica ser explícito o pasar las referencias como argumentos a funciones.
+        // Para simplificar, este script asume que window.db y window.votesCollection ya existen.
+        import { addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
         const mobileMenuButton = document.getElementById('mobileMenuButton');
         const mobileMenu = document.getElementById('mobileMenu');
         const backToTopBtn = document.getElementById('backToTopBtn');
@@ -258,13 +226,13 @@
             }
         });
 
-        // --- Lógica para manejar el envío del formulario de votación ---
+        // --- Lógica para manejar el envío del formulario de votación a Firebase ---
 
-        voteForm.addEventListener('submit', (event) => {
+        voteForm.addEventListener('submit', async (event) => {
             event.preventDefault(); // Evita el envío del formulario por defecto
 
-            const voterName = document.getElementById('voterName').value;
-            const voterLastName = document.getElementById('voterLastName').value;
+            const voterName = document.getElementById('voterName').value.trim();
+            const voterLastName = document.getElementById('voterLastName').value.trim();
             const soap = document.getElementById('soapSelect').value;
 
             if (!voterName || !voterLastName || !soap) {
@@ -273,33 +241,35 @@
                 return;
             }
 
-            const vote = {
+            const voteData = {
                 voterName: voterName,
                 voterLastName: voterLastName,
                 soap: soap,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString() // Guarda la fecha y hora en formato ISO
             };
 
-            // Recupera votos existentes o inicializa un array vacío
-            let votes = JSON.parse(localStorage.getItem('soapVotes')) || [];
+            try {
+                // Asegúrate de que window.votesCollection esté disponible (definido en el script type="module" de arriba)
+                await addDoc(window.votesCollection, voteData);
+                console.log("¡Voto guardado en Firebase!");
+                messageDiv.textContent = '¡Gracias por tu voto!';
+                messageDiv.className = 'mt-4 text-center text-sm font-semibold text-green-600';
 
-            // Agrega el nuevo voto
-            votes.push(vote);
+                // Limpiar el formulario después de enviar
+                voteForm.reset();
 
-            // Guarda el array actualizado en localStorage
-            localStorage.setItem('soapVotes', JSON.stringify(votes));
+                // Redirigir a la página de agradecimiento después de un breve retraso
+                setTimeout(() => {
+                    window.location.href = 'results.html';
+                }, 1500); // Redirige después de 1.5 segundos
 
-            messageDiv.textContent = '¡Gracias por tu voto!';
-            messageDiv.className = 'mt-4 text-center text-sm font-semibold text-green-600';
-
-            // Opcional: Limpiar el formulario después de enviar
-            voteForm.reset();
-
-            // Opcional: Redirigir a la página de resultados después de un breve retraso
-            setTimeout(() => {
-                window.location.href = 'gracias.html';
-            }, 1500); // Redirige después de 1.5 segundos
+            } catch (e) {
+                console.error("Error al añadir el voto a Firebase: ", e);
+                messageDiv.textContent = 'Hubo un error al registrar tu voto. Por favor, inténtalo de nuevo.';
+                messageDiv.className = 'mt-4 text-center text-sm font-semibold text-red-600';
+            }
         });
     </script>
+
 </body>
 </html>

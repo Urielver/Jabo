@@ -10,9 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet"/>
 
     <style>
-        /* ---------- Variables de diseño ---------- */
+        /* Estilos CSS (se mantienen los tuyos) */
         body {
-            font-family: 'Inter', sans-serif; /* Asegúrate de que esta fuente esté enlazada si la usas */
+            font-family: 'Inter', sans-serif;
             background: #f7fafc;
             scroll-behavior: smooth;
         }
@@ -21,25 +21,12 @@
             font-family: 'Dancing Script', cursive;
         }
 
-        .soft-green-bg {
-            background: #D1FAE5;
-        }
+        .soft-green-bg { background: #D1FAE5; }
+        .soft-green-text { color: #01130d; }
+        .dark-green-bg { background: url(imagen/Jabon-de-lavanda-768x432.jpg) center/cover no-repeat; }
+        .dark-green-text { color: #065F46; }
 
-        .soft-green-text {
-            color: #01130d;
-        }
-
-        .dark-green-bg {
-            background: url(imagen/Jabon-de-lavanda-768x432.jpg) center/cover no-repeat;
-        }
-
-        .dark-green-text {
-            color: #065F46;
-        }
-
-        .min-h-screen-minus-header {
-            min-height: calc(100vh - 80px);
-        }
+        .min-h-screen-minus-header { min-height: calc(100vh - 80px); }
 
         .mobile-menu {
             max-height: 0;
@@ -52,15 +39,10 @@
             transition: max-height .3s ease-in;
         }
 
-        .fixed-button {
-            display: none;
-        }
+        .fixed-button { display: none; }
+        .fixed-button.show { display: block; }
 
-        .fixed-button.show {
-            display: block;
-        }
-
-        /* ----------- Tabla estilo Excel ---------- */
+        /* Estilos de tabla Excel */
         .excel-table-container {
             overflow-x: auto;
             border: 1px solid #e2e8f0;
@@ -98,36 +80,50 @@
             transition: background-color .2s;
         }
 
-        .textoresul {
-            padding: 10px;
-        }
+        .textoresul { padding: 10px; }
     </style>
 
     <script type="module">
+        // Importa las funciones necesarias de Firebase SDK
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        // Añade getDoc, setDoc para manejar el conteo de visitas
+        import { getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // TU CONFIGURACIÓN DE FIREBASE (¡REEMPLAZA ESTOS VALORES CON LOS DE TU PROYECTO!)
+        // ASEGÚRATE DE QUE ESTOS SON LOS VALORES REALES DE TU PROYECTO FIREBASE
         const firebaseConfig = {
-            apiKey: "TU_API_KEY",
-            authDomain: "TU_AUTH_DOMAIN",
-            projectId: "TU_PROJECT_ID",
-            storageBucket: "TU_STORAGE_BUCKET",
-            messagingSenderId: "TU_MESSAGING_SENDER_ID",
-            appId: "TU_APP_ID"
+            apiKey: "AIzaSyCU2khNhW9XAFZXu-SmYOgoplOGJDC1Ds8", // <--- ¡Copia tu API Key de Firebase!
+            authDomain: "alquimia-natural-eca99.firebaseapp.com", // <--- ¡Copia tu Auth Domain!
+            projectId: "alquimia-natural-eca99", // <--- ¡Copia tu Project ID!
+            storageBucket: "alquimia-natural-eca99.firebasestorage.app", // <--- ¡Copia tu Storage Bucket!
+            messagingSenderId: "939257613295", // <--- ¡Copia tu Messaging Sender ID!
+            appId: "1:939257613295:web:f01f18c15b5789a6b4c41a", // <--- ¡Copia tu App ID!
+            measurementId: "G-WRLCWFLGF9" // Si lo tienes, si no, puedes omitirlo
         };
 
         // Inicializa Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Haz que 'db' y 'votesCollection' sean accesibles globalmente para el script principal
-        // (considera refactorizar para evitar globales en un proyecto grande).
+        // Hace que 'db' y las colecciones sean accesibles globalmente para el script principal
         window.db = db;
-        window.votesCollection = collection(db, "soapVotes"); // 'soapVotes' es el nombre de tu colección en Firestore
+        window.votesCollection = collection(db, "soapVotes"); // Colección de votos
+        window.metricsCollection = collection(db, "metrics"); // Nueva colección para métricas/visitas
+        window.websiteStatsDoc = doc(window.metricsCollection, "websiteStats"); // Documento específico para las estadísticas del sitio
+        
+        // Exporta funciones de Firestore si son usadas en el segundo script sin import
+        window.getDocs = getDocs;
+        window.query = query;
+        window.orderBy = orderBy;
+        window.deleteDoc = deleteDoc;
+        window.doc = doc;
+        window.getDoc = getDoc; // Para leer un solo documento
+        window.setDoc = setDoc; // Para escribir un documento
+        window.updateDoc = updateDoc; // Para actualizar un documento existente
     </script>
-    </head>
+</head>
 <body class="relative" id="top">
+    <!-- Navbar (se mantiene igual) -->
     <nav class="dark-green-bg p-4 shadow-lg sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
             <a href="#top" class="text-4xl font-bold flex items-center soft-green-text">
@@ -165,8 +161,7 @@
             <a href="tarjeta.html" class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Tarjeta</a>
             <a href="results.html" class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Resultados</a>
             <a href="compras.html" class="block text-gray-800 py-2 px-4 hover:bg-green-700 rounded-md">Comprar</a>
-            <a href="votaciones.html"
-                class="block bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 text-center mt-1">
+            <a href="votacionness.html" class="block bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-700 text-center mt-1">
                 Votar
             </a>
             <button id="logoutButtonMobile"
@@ -188,6 +183,7 @@
             </div>
         </section>
 
+    <!-- Sección de Login (inicialmente visible) -->
     <section id="login-section" class="py-16 md:py-20 bg-gray-50 flex items-center justify-center min-h-screen-minus-header">
         <div class="container mx-auto px-4">
             <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
@@ -212,9 +208,11 @@
         </div>
     </section>
 
+    <!-- Sección de Resultados (inicialmente oculta) -->
     <section id="results-content" class="py-16 md:py-20 bg-gray-50 hidden">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-green-800">Detalle de Votaciones</h2>
+            <!-- Tabla de Votos Individuales -->
             <div class="excel-table-container">
                 <table id="votesTable" class="excel-table">
                     <thead>
@@ -227,13 +225,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        </tbody>
+                        <!-- Los votos se cargarán aquí -->
+                    </tbody>
                 </table>
             </div>
             <div class="text-center mt-8">
                 <p class="text-lg text-gray-700">Total de Votos: <span id="totalVotes" class="font-bold">0</span></p>
             </div>
 
+            <!-- Sección de Sorteo -->
             <div class="text-center mt-12 p-6 bg-white rounded-lg shadow-md">
                 <h3 class="text-2xl font-bold mb-4 text-green-800">¡Realizar Sorteo!</h3>
                 <button id="drawButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline text-lg">
@@ -249,18 +249,45 @@
                 </button>
             </div>
 
+            <!-- Nueva Tabla de Clasificación de Votos por Jabón -->
             <div class="text-center mt-12 p-6 bg-white rounded-lg shadow-md">
                 <h3 class="text-2xl font-bold mb-4 text-green-800">Clasificación de Votos por Jabón</h3>
-                <div id="soapClassification" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg">
-                    </div>
+                <div class="excel-table-container">
+                    <table id="soapClassificationTable" class="excel-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Jabón</th>
+                                <th>Total de Votos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Aquí se cargará la clasificación de jabones por votos -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="noSoapClassificationMessage" class="mt-4 text-gray-500 hidden">No hay votos para clasificar aún.</div>
             </div>
 
+            <!-- Nueva Tabla de Estadísticas Generales -->
             <div class="text-center mt-12 p-6 bg-white rounded-lg shadow-md">
                 <h3 class="text-2xl font-bold mb-4 text-green-800">Estadísticas Generales</h3>
-                <p class="text-lg text-gray-700 mb-2">Total de Personas que Votaron: <span id="uniqueVoters" class="font-bold">0</span></p>
-                <p class="text-lg text-gray-700">Visitas a la Página Principal (index.html): <span id="pageVisitsCount" class="font-bold">0</span></p>
+                <div class="excel-table-container">
+                    <table id="generalStatisticsTable" class="excel-table">
+                        <thead>
+                            <tr>
+                                <th>Métrica</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Aquí se cargarán las estadísticas generales -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
+            <!-- Sección de Administración -->
             <div class="text-center mt-12 p-6 bg-red-50 rounded-lg shadow-md border-red-300 border">
                 <h3 class="text-2xl font-bold mb-4 text-red-800">Administración</h3>
                 <button id="resetVotesButton" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-4">
@@ -273,6 +300,8 @@
 
         </div>
     </section>
+
+    <!-- Footer (se mantiene igual) -->
     <footer class="bg-green-800 text-white py-8 text-center">
         <div class="container mx-auto px-4">
             <p>&copy; 2025 Jabones Artesanales. Todos los derechos reservados.</p>
@@ -285,6 +314,7 @@
     </a>
 
     <script>
+        // --- Declaración de variables globales de elementos HTML ---
         const mobileMenuButton = document.getElementById('mobileMenuButton');
         const mobileMenu = document.getElementById('mobileMenu');
         const backToTopBtn = document.getElementById('backToTopBtn');
@@ -294,9 +324,11 @@
         const drawResultsDiv = document.getElementById('drawResults');
         const winnerList = document.getElementById('winnerList');
         const resetDrawButton = document.getElementById('resetDrawButton');
-        const soapClassificationDiv = document.getElementById('soapClassification');
-        const uniqueVotersSpan = document.getElementById('uniqueVoters');
-        const pageVisitsCountSpan = document.getElementById('pageVisitsCount');
+        
+        // Nuevas referencias para las tablas de estadísticas
+        const soapClassificationTableBody = document.querySelector('#soapClassificationTable tbody');
+        const noSoapClassificationMessage = document.getElementById('noSoapClassificationMessage');
+        const generalStatisticsTableBody = document.querySelector('#generalStatisticsTable tbody');
 
         const loginSection = document.getElementById('login-section');
         const resultsContent = document.getElementById('results-content');
@@ -304,20 +336,22 @@
         const loginMessage = document.getElementById('loginMessage');
 
         const resetVotesButton = document.getElementById('resetVotesButton');
-        const logoutButton = document.getElementById('logoutButton'); // Main logout button
-        const logoutButtonNav = document.getElementById('logoutButtonNav'); // Nav logout button
-        const logoutButtonMobile = document.getElementById('logoutButtonMobile'); // Mobile nav logout button
+        const logoutButton = document.getElementById('logoutButton'); 
+        const logoutButtonNav = document.getElementById('logoutButtonNav'); 
+        const logoutButtonMobile = document.getElementById('logoutButtonMobile'); 
 
-        const CORRECT_USERNAME = "uriel";
-        const CORRECT_PASSWORD = "123";
-        const RESET_PASSWORD = "vargas"; // Password for resetting data
+        // Credenciales y contraseña de restablecimiento
+        const CORRECT_USERNAME = "u";
+        const CORRECT_PASSWORD = "1";
+        const RESET_PASSWORD = "vargas"; 
 
-        let allVotes = []; // Variable para almacenar todos los votos cargados
+        // Variable global para almacenar los votos cargados de Firebase
+        let allVotes = []; 
 
+        // --- Funciones de UI/interacción básica (se mantienen igual) ---
         function toggleMobileMenu() {
             mobileMenu.classList.toggle('active');
         }
-
         mobileMenuButton.addEventListener('click', toggleMobileMenu);
 
         mobileMenu.querySelectorAll('a').forEach(link => {
@@ -345,65 +379,90 @@
         });
 
         // --- Lógica de Login ---
-        loginForm.addEventListener('submit', (event) => {
+        loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const usernameInput = document.getElementById('username').value;
             const passwordInput = document.getElementById('password').value;
 
             if (usernameInput === CORRECT_USERNAME && passwordInput === CORRECT_PASSWORD) {
-                loginSection.classList.add('hidden'); // Oculta la sección de login
-                resultsContent.classList.remove('hidden'); // Muestra la sección de resultados
-                logoutButtonNav.classList.remove('hidden'); // Muestra botón de logout en nav
-                logoutButtonMobile.classList.remove('hidden'); // Muestra botón de logout en nav móvil
-                loadAllStatsAndResults(); // Carga todos los resultados y estadísticas
-                localStorage.setItem('loggedIn', 'true'); // Marca que el usuario está logeado (sesión básica)
+                loginSection.classList.add('hidden'); 
+                resultsContent.classList.remove('hidden'); 
+                logoutButtonNav.classList.remove('hidden'); 
+                logoutButtonMobile.classList.remove('hidden'); 
+                
+                await loadAllStatsAndResults(); // Espera a que los datos se carguen de Firebase
+                
+                localStorage.setItem('loggedIn', 'true'); 
             } else {
                 loginMessage.textContent = "Usuario o contraseña incorrectos.";
             }
         });
 
         // --- Lógica para cargar todos los resultados y estadísticas ---
-        function loadAllStatsAndResults() {
-            loadVotesResults(); // Carga la tabla de votos y el total de votos
-            updateSoapClassification(); // Actualiza la clasificación de jabones
-            updateGeneralStatistics(); // Actualiza las estadísticas generales (personas únicas, visitas)
+        async function loadAllStatsAndResults() {
+            await loadVotesResults(); // Espera a que esta función, que lee de Firebase, termine
+            await updateSoapClassification(); // La clasificación también podría ser asíncrona si hay muchos datos
+            await updateGeneralStatistics(); // Espera a que las estadísticas generales se carguen (ahora de Firebase)
         }
 
-        // --- Lógica para cargar los resultados de votación ---
-        function loadVotesResults() {
-            console.log('Intentando cargar votos desde localStorage...'); // Depuración
-            allVotes = JSON.parse(localStorage.getItem('soapVotes')) || []; // Almacena los votos en allVotes
-            console.log('Votos cargados:', allVotes); // Depuración
+        // --- Lógica para cargar los resultados de votación DESDE FIREBASE ---
+        async function loadVotesResults() {
+            console.log("Intentando cargar votos de Firebase Firestore..."); 
             votesTableBody.innerHTML = ''; // Limpia la tabla actual
+            
+            const votesCollectionRef = window.votesCollection;
+            const q = window.query(votesCollectionRef, window.orderBy("timestamp", "desc")); // Usar window.query y window.orderBy
 
-            if (allVotes.length === 0) {
-                const row = votesTableBody.insertRow();
-                const cell = row.insertCell();
-                cell.colSpan = 5; // Cubre todas las columnas
-                cell.textContent = 'Aún no hay votos registrados.';
-                cell.className = 'text-center text-gray-500 py-4';
-                drawButton.disabled = true; // Deshabilita el botón de sorteo si no hay votos
-                drawButton.textContent = 'No hay votos para sortear';
-                drawButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-                drawButton.classList.add('bg-gray-400', 'cursor-not-allowed');
-            } else {
-                allVotes.forEach((vote, index) => {
+            try {
+                const querySnapshot = await window.getDocs(q); // Usar window.getDocs
+                console.log(`QuerySnapshot recibido: ${querySnapshot.size} documentos.`); 
+
+                allVotes = []; 
+                let rowNumber = 1;
+
+                if (querySnapshot.empty) {
+                    console.log("No hay documentos en la colección 'soapVotes'.");
                     const row = votesTableBody.insertRow();
-                    row.insertCell().textContent = index + 1; // Nº Persona (ID de voto simple)
-                    row.insertCell().textContent = vote.voterName;
-                    row.insertCell().textContent = vote.voterLastName;
-                    row.insertCell().textContent = vote.soap;
-                    row.insertCell().textContent = new Date(vote.timestamp).toLocaleString('es-AR');
-                });
-                drawButton.disabled = false; // Habilita el botón de sorteo
-                drawButton.textContent = 'Realizar Sorteo';
-                drawButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
-                drawButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    const cell = row.insertCell();
+                    cell.colSpan = 5; 
+                    cell.textContent = 'Aún no hay votos registrados.';
+                    cell.className = 'text-center text-gray-500 py-4';
+                    totalVotesSpan.textContent = 0;
+                    
+                    // Deshabilita botones de sorteo si no hay votos
+                    drawButton.disabled = true;
+                    drawButton.textContent = 'No hay votos para sortear';
+                    drawButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    drawButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                    resetDrawButton.classList.add('hidden'); 
+                } else {
+                    drawButton.disabled = false; 
+                    drawButton.textContent = 'Realizar Sorteo';
+                    drawButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                    drawButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    
+                    querySnapshot.forEach((doc) => {
+                        const vote = { id: doc.id, ...doc.data() };
+                        allVotes.push(vote); 
+
+                        const row = votesTableBody.insertRow();
+                        row.insertCell().textContent = rowNumber++; 
+                        row.insertCell().textContent = vote.voterName;
+                        row.insertCell().textContent = vote.voterLastName;
+                        row.insertCell().textContent = vote.soap;
+                        row.insertCell().textContent = vote.timestamp ? new Date(vote.timestamp.toDate()).toLocaleString('es-AR') : 'N/A';
+                    });
+
+                    totalVotesSpan.textContent = allVotes.length; 
+                }
+
+            } catch (e) {
+                console.error("Error al cargar los votos de Firestore: ", e); 
+                votesTableBody.innerHTML = '<tr><td colspan="5" class="text-center text-red-500 py-4">Error al cargar los votos. Por favor, inténtalo de nuevo.</td></tr>';
             }
-            totalVotesSpan.textContent = allVotes.length;
         }
 
-        // --- Lógica para el sorteo ---
+        // --- Lógica para el sorteo (se mantiene igual) ---
         function selectRandomWinner() {
             if (allVotes.length === 0) {
                 winnerList.innerHTML = '<li>No hay participantes para el sorteo.</li>';
@@ -416,10 +475,10 @@
                 [shuffledVotes[i], shuffledVotes[j]] = [shuffledVotes[j], shuffledVotes[i]];
             }
 
-            const numberOfWinners = 1; // Puedes cambiar esto para seleccionar más ganadores
+            const numberOfWinners = 1; 
             const winners = shuffledVotes.slice(0, numberOfWinners);
 
-            winnerList.innerHTML = ''; // Limpiar ganadores anteriores
+            winnerList.innerHTML = ''; 
             if (winners.length > 0) {
                 winners.forEach(winner => {
                     const listItem = document.createElement('li');
@@ -451,63 +510,109 @@
         drawButton.addEventListener('click', selectRandomWinner);
         resetDrawButton.addEventListener('click', resetDraw);
 
-        // --- Lógica para la clasificación de votos por jabón ---
-        function updateSoapClassification() {
+        // --- Lógica para la clasificación de votos por jabón (ahora en una tabla) ---
+        async function updateSoapClassification() { // Hecho async por si la carga de allVotes fuera lenta
+            soapClassificationTableBody.innerHTML = ''; // Limpia la tabla antes de rellenar
+            noSoapClassificationMessage.classList.add('hidden'); // Oculta el mensaje por defecto
+
             const soapCounts = {};
             allVotes.forEach(vote => {
                 soapCounts[vote.soap] = (soapCounts[vote.soap] || 0) + 1;
             });
 
-            soapClassificationDiv.innerHTML = ''; // Limpiar clasificación anterior
-
             const sortedSoaps = Object.entries(soapCounts).sort(([,countA], [,countB]) => countB - countA);
 
             if (sortedSoaps.length === 0) {
-                soapClassificationDiv.textContent = 'No hay votos para clasificar aún.';
-                soapClassificationDiv.classList.add('text-gray-500');
+                noSoapClassificationMessage.classList.remove('hidden'); // Muestra el mensaje si no hay votos
             } else {
+                let rank = 1; 
                 sortedSoaps.forEach(([soapName, count]) => {
-                    const item = document.createElement('div');
-                    item.className = 'bg-gray-100 p-3 rounded-md flex justify-between items-center';
-                    item.innerHTML = `<span>${soapName}:</span> <span class="font-bold text-green-700">${count} votos</span>`;
-                    soapClassificationDiv.appendChild(item);
+                    const row = soapClassificationTableBody.insertRow(); 
+                    row.insertCell().textContent = rank++; 
+                    row.insertCell().textContent = soapName; 
+                    row.insertCell().textContent = count; 
                 });
             }
         }
 
-        // --- Lógica para estadísticas generales (personas únicas y visitas a index.html) ---
-        function updateGeneralStatistics() {
-            // Contar personas únicas (basado en nombre y apellido, una limitación en cliente-side)
+        // --- Lógica para estadísticas generales (ahora conectadas a Firebase) ---
+        async function updateGeneralStatistics() {
+            generalStatisticsTableBody.innerHTML = ''; // Limpia la tabla
+
+            // Métrica 1: Total de Personas que Votaron (se calcula de allVotes)
             const uniqueVotersSet = new Set();
             allVotes.forEach(vote => {
                 uniqueVotersSet.add(`${vote.voterName} ${vote.voterLastName}`);
             });
-            uniqueVotersSpan.textContent = uniqueVotersSet.size;
+            const totalUniqueVoters = uniqueVotersSet.size;
 
-            // Obtener visitas a index.html
-            const indexPageVisits = parseInt(localStorage.getItem('indexPageVisits')) || 0;
-            pageVisitsCountSpan.textContent = indexPageVisits;
+            // Métrica 2: Visitas a la Página Principal (lee de Firebase)
+            let totalPageVisits = 0;
+            try {
+                // Asume que tienes un documento 'websiteStats' en una colección 'metrics'
+                const docSnap = await window.getDoc(window.websiteStatsDoc); // Usa window.getDoc
+                if (docSnap.exists()) {
+                    totalPageVisits = docSnap.data().totalVisits || 0;
+                } else {
+                    console.log("Documento 'websiteStats' no encontrado en 'metrics'. Inicializando a 0.");
+                    // Si el documento no existe, lo creamos para que el resetVotesButton pueda usarlo
+                    await window.setDoc(window.websiteStatsDoc, { totalVisits: 0 });
+                }
+            } catch (error) {
+                console.error("Error al leer visitas de Firebase:", error);
+                // Si hay un error, el contador se mantiene en 0 o el último valor conocido.
+            }
+
+            // Añadir filas a la nueva tabla de estadísticas
+            let row1 = generalStatisticsTableBody.insertRow();
+            row1.insertCell().textContent = "Total de Personas que Votaron:";
+            row1.insertCell().textContent = totalUniqueVoters;
+
+            let row2 = generalStatisticsTableBody.insertRow();
+            row2.insertCell().textContent = "Visitas a la Página Principal:";
+            row2.insertCell().textContent = totalPageVisits;
         }
 
-        // --- Lógica para Restablecer Votaciones ---
-        resetVotesButton.addEventListener('click', () => {
+
+        // --- Lógica para Restablecer Votaciones (ahora elimina de Firebase y localStorage) ---
+        resetVotesButton.addEventListener('click', async () => {
             const password = prompt("Ingrese la contraseña para restablecer las votaciones:");
             if (password === RESET_PASSWORD) {
-                if (confirm("¿Está seguro de que desea restablecer TODAS las votaciones y visitas? Esta acción es irreversible.")) {
-                    localStorage.removeItem('soapVotes');
-                    localStorage.removeItem('indexPageVisits');
-                    alert("Votaciones y visitas restablecidas exitosamente.");
-                    location.reload(); // Recarga la página para mostrar los cambios
+                if (confirm("¿Está seguro de que desea restablecer TODAS las votaciones y estadísticas? Esta acción es irreversible.")) {
+                    try {
+                        // Eliminar todos los documentos de la colección 'soapVotes'
+                        const votesSnapshot = await window.getDocs(window.votesCollection);
+                        const deleteVotesPromises = [];
+                        votesSnapshot.forEach((docu) => {
+                            deleteVotesPromises.push(window.deleteDoc(window.doc(window.db, "soapVotes", docu.id)));
+                        });
+                        await Promise.all(deleteVotesPromises);
+                        console.log("Todos los documentos de Firestore en 'soapVotes' eliminados.");
+
+                        // Restablecer el contador de visitas en Firebase
+                        await window.setDoc(window.websiteStatsDoc, { totalVisits: 0 });
+                        console.log("Contador de visitas en Firebase restablecido a 0.");
+
+                        // Eliminar de localStorage (por si acaso hay datos viejos allí)
+                        localStorage.removeItem('soapVotes'); 
+                        localStorage.removeItem('indexPageVisits'); 
+                        
+                        alert("Votaciones y estadísticas restablecidas exitosamente.");
+                        location.reload(); 
+                    } catch (error) {
+                        console.error("Error al restablecer las votaciones:", error);
+                        alert("Hubo un error al restablecer las votaciones. Revisa la consola.");
+                    }
                 }
-            } else if (password !== null) { // If user clicked cancel, password will be null
+            } else if (password !== null) { 
                 alert("Contraseña incorrecta. No se restablecieron las votaciones.");
             }
         });
 
-        // --- Lógica para Cerrar Sesión ---
+        // --- Lógica para Cerrar Sesión (se mantiene igual) ---
         function logout() {
-            localStorage.removeItem('loggedIn'); // Elimina la marca de sesión
-            location.reload(); // Recarga la página para volver al login
+            localStorage.removeItem('loggedIn'); 
+            location.reload(); 
         }
 
         logoutButton.addEventListener('click', logout);
@@ -515,14 +620,14 @@
         logoutButtonMobile.addEventListener('click', logout);
 
 
-        // Al cargar la página: Comprobar si el usuario ya está "logueado" (para mantener la sesión básica)
-        document.addEventListener('DOMContentLoaded', () => {
+        // --- Al cargar la página: Comprobar si el usuario ya está "logueado" ---
+        document.addEventListener('DOMContentLoaded', async () => {
             if (localStorage.getItem('loggedIn') === 'true') {
                 loginSection.classList.add('hidden');
                 resultsContent.classList.remove('hidden');
                 logoutButtonNav.classList.remove('hidden');
                 logoutButtonMobile.classList.remove('hidden');
-                loadAllStatsAndResults(); // Carga todo
+                await loadAllStatsAndResults(); // Espera la carga de datos
             } else {
                 loginSection.classList.remove('hidden');
                 resultsContent.classList.add('hidden');
@@ -531,15 +636,16 @@
             }
         });
         
-        // Escuchar eventos de storage (útil para múltiples pestañas)
+        // --- Escuchar eventos de storage (útil para múltiples pestañas) ---
+        // Este listener de storage sigue siendo útil para la sesión de login y el contador de visitas (si aún lo usas localmente).
+        // Para los datos de Firebase, una forma más robusta sería usar onSnapshot, pero eso es más complejo de implementar.
         window.addEventListener('storage', (event) => {
             if (event.key === 'soapVotes' || event.key === 'indexPageVisits' || event.key === 'loggedIn') {
-                if (localStorage.getItem('loggedIn') === 'true') { // Solo actualiza si está logeado
+                if (localStorage.getItem('loggedIn') === 'true') { 
                     console.log('localStorage cambió, recargando resultados y estadísticas.');
                     loadAllStatsAndResults();
-                    resetDraw(); // Reinicia el sorteo si los datos cambian
+                    resetDraw(); 
                 } else {
-                    // If loggedIn state changes to false, force logout
                     location.reload();
                 }
             }
