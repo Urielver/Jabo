@@ -1,80 +1,55 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Precargando...</title>
-  <style>
-    body {
-      margin: 0;
-      background: #D1FAE5;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      color: #808080;
-      font-family: Arial, sans-serif;
-    }
-
-    .loader {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .ball {
-      width: 20px;
-      height: 20px;
-      background-color: #10B981;
-      border-radius: 50%;
-      animation: bounce 0.6s infinite alternate;
-    }
-
-    .ball:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .ball:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes bounce {
-      from {
-        transform: translateY(0);
-      }
-      to {
-        transform: translateY(-25px);
-      }
-    }
-
-    #percent {
-      font-size: 24px;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductor de Música</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="loader">
-    <div class="ball"></div>
-    <div class="ball"></div>
-    <div class="ball"></div>
-   </div>
-  <div id="percent">0%</div>
+    <div class="music-player">
+        <div class="song-info">
+            <img src="placeholder.jpg" alt="Carátula del Álbum" id="album-art">
+            <div class="song-details">
+                <h2 id="song-title">Título de la Canción</h2>
+                <p id="song-artist">Artista</p>
+            </div>
+        </div>
 
-  <script>
-    let percent = 0;
-    const percentText = document.getElementById("percent");
+        <div class="controls">
+            <button id="prev-button">Anterior</button>
+            <button id="play-pause-button">Reproducir</button>
+            <button id="next-button">Siguiente</button>
+        </div>
 
-    const interval = setInterval(() => {
-      percent++;
-      percentText.textContent = percent + "%";
-      if (percent >= 100) {
-        clearInterval(interval);
-        // Redirige a otra página (cámbiala a tu URL deseada)
-        window.location.href = "inicio.html";
-      }
-    }, 40); // Tiempo total: 100 * 40ms = 4000ms = 4 segundos
-  </script>
+        <div class="progress-bar-container">
+            <input type="range" id="progress-bar" value="0" max="100">
+            <div class="time-display">
+                <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+            </div>
+        </div>
+
+        <div class="extra-controls">
+            <button id="repeat-button" title="Repetir">🔁</button>
+            <div class="volume-control">
+                <span id="volume-icon">🔊</span>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
+            </div>
+            <button id="shuffle-button" title="Aleatorio">🔀</button>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Buscar en la lista...">
+        </div>
+
+        <div class="playlist-container">
+            <h3>Lista de Reproducción</h3>
+            <ul id="playlist">
+                <!-- Las canciones se añadirán aquí mediante JavaScript -->
+            </ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
