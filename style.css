@@ -12,55 +12,63 @@ body {
 }
 
 .music-player {
-    background-color: #1e1e1e;
+    /* Cambiado a un negro casi puro para resaltar el LED */
+    background-color: #050505;
+    /* Alternativa transparente: background-color: rgba(0, 0, 0, 0.7); */
+    /* Si se usa transparencia, el body podría necesitar un fondo más interesante */
     border-radius: 15px;
-    padding: 25px;
+    padding: 25px; /* Padding interno del reproductor */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     width: 100%;
     max-width: 400px;
     position: relative;
-    overflow: hidden; /* Necesario para la animación del borde */
+    overflow: hidden; /* Reintroducido para contener el LED en el marco */
+    z-index: 1;
 }
 
-/* Animación de borde LED */
+/* Eliminado .music-player-glow-container y su CSS asociado */
+
+/* Animación de borde LED - De vuelta en .music-player */
 .music-player::before,
 .music-player::after {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
+    top: 50%; /* Centrar en el reproductor */
+    left: 50%; /* Centrar en el reproductor */
     width: 200%;
     height: 200%;
+    /* transform ya no se define aquí, se define completamente en la animación */
+
     background: conic-gradient(
-        transparent,
-        transparent,
-        transparent,
         #00ccff, /* Cian */
         #ff00ff, /* Magenta */
         #ffff00, /* Amarillo */
-        #00ff00  /* Verde */
+        #00ff00,  /* Verde */
+        #00ccff  /* Repetir para cerrar el ciclo */
     );
     animation: rotateLedBorder 6s linear infinite;
     z-index: 0;
 }
 
 .music-player::after {
-    filter: blur(30px); /* Suaviza el gradiente */
+    filter: blur(20px);
+    opacity: 0.9;
 }
 
-/* Contenido del reproductor encima de la animación */
-.song-info, .controls, .progress-bar-container, .playlist-container {
+/* Contenido del reproductor */
+.song-info, .controls, .progress-bar-container, .playlist-container, .extra-controls, .search-container {
     position: relative;
     z-index: 1;
+    background-color: rgba(5, 5, 5, 0.0);
 }
 
 
 @keyframes rotateLedBorder {
     0% {
-        transform: rotate(0deg);
+        transform: translate(-50%, -50%) rotate(0deg);
     }
     100% {
-        transform: rotate(360deg);
+        transform: translate(-50%, -50%) rotate(360deg);
     }
 }
 
@@ -147,15 +155,17 @@ body {
     font-size: 1.3em; /* Iconos más grandes */
     cursor: pointer;
     padding: 5px;
-    transition: color 0.3s;
+    transition: color 0.3s, text-shadow 0.3s;
 }
 
 .extra-controls button:hover {
     color: #ffffff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
 .extra-controls button.active {
     color: #1db954; /* Activo color Spotify */
+    text-shadow: 0 0 5px rgba(29, 185, 84, 0.7);
 }
 
 .volume-control {
