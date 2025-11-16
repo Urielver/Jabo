@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Alquimia Natural - Compra de Jabones</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <!-- PDF Generator -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="bg-gray-100 p-6 font-sans">
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-3xl font-bold text-green-800 mb-4 text-center">Alquimia Natural</h1>
+    <p class="text-center text-gray-500 mb-6">Jabones artesanales 100% naturales</p>
+
+    <!-- Formulario de cliente -->
+    <form id="userForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <input id="nombre" type="text" placeholder="Nombre" class="p-2 border rounded" required>
+      <input id="apellido" type="text" placeholder="Apellido" class="p-2 border rounded" required>
+    </form>
+
+    <!-- Lista de productos -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-green-50 border p-4 rounded shadow">
+        <h2 class="text-lg font-bold">Avena y Miel</h2>
+        <p class="text-sm text-gray-600">Hidratante para piel sensible.</p>
+        <p class="text-green-700 font-bold mt-2">$1200</p>
+        <button onclick="comprar('Avena y Miel', 1200)" class="mt-2 bg-green-700 text-white px-3 py-1 rounded">Comprar</button>
+      </div>
+
+      <div class="bg-pink-50 border p-4 rounded shadow">
+        <h2 class="text-lg font-bold">Rosa Mosqueta</h2>
+        <p class="text-sm text-gray-600">Regenerador para piel seca.</p>
+        <p class="text-pink-700 font-bold mt-2">$1300</p>
+        <button onclick="comprar('Rosa Mosqueta', 1300)" class="mt-2 bg-pink-700 text-white px-3 py-1 rounded">Comprar</button>
+      </div>
+
+      <div class="bg-gray-50 border p-4 rounded shadow">
+        <h2 class="text-lg font-bold">Carbón Activado</h2>
+        <p class="text-sm text-gray-600">Limpieza profunda.</p>
+        <p class="text-gray-800 font-bold mt-2">$1250</p>
+        <button onclick="comprar('Carbón Activado', 1250)" class="mt-2 bg-gray-800 text-white px-3 py-1 rounded">Comprar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FACTURA -->
+  <div id="facturaContainer" class="hidden max-w-2xl mx-auto mt-8 bg-white border p-6 rounded shadow">
+    <div id="factura" class="text-gray-800">
+      <h2 class="text-xl font-bold mb-2">Factura</h2>
+      <p><strong>Factura Nº:</strong> <span id="facturaNumero"></span></p>
+      <p><strong>Fecha:</strong> <span id="facturaFecha"></span></p>
+      <p><strong>Cliente:</strong> <span id="facturaCliente"></span></p>
+      <table class="w-full mt-4 border text-sm">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="border p-2">Producto</th>
+            <th class="border p-2">Cantidad</th>
+            <th class="border p-2">Precio Unitario</th>
+            <th class="border p-2">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="facturaProducto" class="border p-2"></td>
+            <td class="border p-2">1</td>
+            <td id="facturaPrecio" class="border p-2"></td>
+            <td id="facturaTotal" class="border p-2"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Botones -->
+    <button id="descargarPDF" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Descargar PDF</button>
+    <button id="finalizarCompra" class="mt-4 bg-green-600 text-white px-4 py-2 rounded hidden">Finalizar Compra</button>
+    <div id="mensajeGracias" class="mt-6 text-center text-green-700 text-xl font-semibold hidden">
+      ¡Gracias por tu compra! Te esperamos pronto 🌿
+    </div>
+  </div>
+
+  <script>
+    // 🔥 CONFIGURACIÓN FIREBASE (reemplaza con tu info)
+ const firebaseConfig = {
+            apiKey: "AIzaSyCU2khNhW9XAFZXu-SmYOgoplOGJDC1Ds8", // <--- ¡Copia tu API Key de Firebase!
+            authDomain: "alquimia-natural-eca99.firebaseapp.com", // <--- ¡Copia tu Auth Domain!
+            projectId: "alquimia-natural-eca99", // <--- ¡Copia tu Project ID!
+            storageBucket: "alquimia-natural-eca99.firebasestorage.app", // <--- ¡Copia tu Storage Bucket!
+            messagingSenderId: "939257613295", // <--- ¡Copia tu Messaging Sender ID!
+            appId: "1:939257613295:web:f01f18c15b5789a6b4c41a", // <--- ¡Copia tu App ID!
+            measurementId: "G-WRLCWFLGF9" // Si lo tienes, si no, puedes omitirlo
+        };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function comprar(producto, precio) {
+      const nombre = document.getElementById('nombre').value.trim();
+      const apellido = document.getElementById('apellido').value.trim();
+      if (!nombre || !apellido) {
+        alert("Completa tu nombre y apellido antes de comprar.");
+        return;
+      }
+
+      const fecha = new Date();
+      const fechaStr = fecha.toLocaleDateString();
+      const facturaNro = "F" + Math.floor(100000 + Math.random() * 900000);
+
+      // Guardar en Firestore
+      db.collection("pedidos").add({
+        nombre,
+        apellido,
+        producto,
+        cantidad: 1,
+        precio,
+        total: precio,
+        fecha: firebase.firestore.Timestamp.fromDate(fecha),
+        factura: facturaNro
+      }).then(() => {
+        // Llenar factura
+        document.getElementById('facturaNumero').textContent = facturaNro;
+        document.getElementById('facturaFecha').textContent = fechaStr;
+        document.getElementById('facturaCliente').textContent = `${nombre} ${apellido}`;
+        document.getElementById('facturaProducto').textContent = producto;
+        document.getElementById('facturaPrecio').textContent = `$${precio}`;
+        document.getElementById('facturaTotal').textContent = `$${precio}`;
+        document.getElementById('facturaContainer').classList.remove('hidden');
+      });
+    }
+
+    // Descargar PDF
+    document.getElementById('descargarPDF').addEventListener('click', () => {
+      const factura = document.getElementById('factura');
+      html2pdf().set({
+        margin: 10,
+        filename: 'Factura_Alquimia.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(factura).save().then(() => {
+        document.getElementById('finalizarCompra').classList.remove('hidden');
+      });
+    });
+
+    // Finalizar compra
+    document.getElementById('finalizarCompra').addEventListener('click', () => {
+      document.getElementById('userForm').reset();
+      document.getElementById('facturaContainer').classList.add('hidden');
+      document.getElementById('finalizarCompra').classList.add('hidden');
+      document.getElementById('mensajeGracias').classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
+
